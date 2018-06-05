@@ -1,0 +1,11 @@
+Package: spconf
+Title: Scales of Spatial Confounding Adjustment
+Version: 0.0.0.9000
+Authors@R: person("Joshua", "Keller", email = "jkelle46@jhu.edu", role = c("aut", "cre"))
+Description: Computes the effective range of adjustment corresponding to spatial splines.
+Depends: R (>= 3.5.0)
+Imports: flexclust
+License: GPL-2 | file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
