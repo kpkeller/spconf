@@ -72,8 +72,8 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL){
         lowCurveM <- clusterMap(cl=cl,newfitLoess , s=S_list, d=dgrid_list, SIMPLIFY=TRUE)
         if (stop_cluster) stopCluster(cl) # Stop process, if function started it.
     }
-    lowCurveMedian <- apply(lowCurveM, 2, stats::median, na.rm = TRUE)
-    lowCurveMean <- apply(lowCurveM, 2, mean, na.rm = TRUE)
+    lowCurveMedian <- apply(lowCurveM, 1, stats::median, na.rm = TRUE)
+    lowCurveMean <- apply(lowCurveM, 1, mean, na.rm = TRUE)
     out <- list(SCurve=lowCurveM,
                 SCurveMedian=lowCurveMedian,
                 SCurveMean=lowCurveMean)
