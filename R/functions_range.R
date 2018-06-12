@@ -54,7 +54,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL){
         n <- nrow(S)
         lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
         for (i in 1:n){#nrow(S)) {
-            lowCurveM[,i] <- fitLoess(y=S[i,], x=dgrid[, i], newd=newd)
+            lowCurveM[,i] <- fitLoess(y=S[i,], x=dgrid[, i], newx=newd)
         }
     } else  {
         stop_cluster <- FALSE
