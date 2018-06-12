@@ -66,7 +66,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL){
         }
         S_list <- as.list(as.data.frame(t(S)))
         dgrid_list <- as.list(as.data.frame(dgrid))
-        newfitLoess <- function(s, d) fitLoess(s, d, newd=newd)
+        newfitLoess <- function(s, d) fitLoess(s, d, newx=newd)
         environment(newfitLoess) <- .GlobalEnv
         clusterExport(cl=cl, varlist=c("S_list", "dgrid_list", "fitLoess", "newd"), envir=environment())
         lowCurveM <- clusterMap(cl=cl,newfitLoess , s=S_list, d=dgrid_list, SIMPLIFY=TRUE)
@@ -107,7 +107,7 @@ find_first_zero_cross <- function(x){
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions.
 #' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
-#' @param returnFull Should the full curve objects be returned, or just the range value.
+#' @param returnCurves Should the mean and median curves be returned, or just the range value of where they first cross zero.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
 #' names of the form \code{s1}, \code{s2}, ...
@@ -145,8 +145,9 @@ compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=
     SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl)
     out <-  find_first_zero_cross(SCurve$SCurveMedian)*scale_factor
     if (returnFull){
-        out <- c(range=out,
-                    SCurve)
+        out <- list(range=out,
+                    curve_median=SCurve$SCurveMedian,
+                    curve_mean=SCurve$SCurveMean)
     }
     return(out)
 }
