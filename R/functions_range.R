@@ -52,7 +52,7 @@ compute_lowCurve_loop <- function(S, dgrid, newd){
 compute_lowCurve <- function(S, dgrid, newd, cl=NULL){
     if (is.null(cl)){
         n <- nrow(S)
-        lowCurveM <- matrix(NA, nrow=nrow(newd), ncol=n)
+        lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
         for (i in 1:n){#nrow(S)) {
             lowCurveM[,i] <- fitLoess(y=S[i,], x=dgrid[, i], newd=newd)
         }
