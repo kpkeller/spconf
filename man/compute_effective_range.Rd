@@ -6,11 +6,11 @@
 \title{Compute effective range}
 \usage{
 compute_effective_range(X, df = 3, nsamp = min(1000, nrow(X)),
-  newd = seq(0, 100, 1), scale_factor = 1, cl = NULL, namestem = "s",
-  inds = NULL, verbose = TRUE)
+  newd = seq(0, 100, 1), scale_factor = 1, returnFull = FALSE,
+  cl = NULL, namestem = "s", inds = NULL, verbose = TRUE)
 
 compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
-  cl = NULL)
+  returnFull = FALSE, cl = NULL)
 }
 \arguments{
 \item{X}{Matrix of spline values. Currently assumed to have columns \code{x}, \code{y}, \code{s1},\code{s2}, ...}
@@ -22,6 +22,8 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 \item{newd}{Distance values at which to make loess predictions.}
 
 \item{scale_factor}{Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.}
+
+\item{returnFull}{Should the full curve objects be returned, or just the range value.}
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 

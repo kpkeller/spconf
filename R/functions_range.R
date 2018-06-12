@@ -107,6 +107,7 @@ find_first_zero_cross <- function(x){
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions.
 #' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
+#' @param returnFull Should the full curve objects be returned, or just the range value.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
 #' names of the form \code{s1}, \code{s2}, ...
@@ -114,18 +115,22 @@ find_first_zero_cross <- function(x){
 #' @param verbose Control message printing.
 #' @export
 #' @importFrom flexclust dist2
-compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, cl=NULL,namestem="s", inds=NULL,verbose=TRUE){
+compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="s", inds=NULL,verbose=TRUE){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
     dgrid <- flexclust::dist2(X[, c("x", "y")], X[inds, c("x", "y")])
-    out <- numeric(length(df))
+    if(returnFull){
+        out <- vector("list", length(df))
+    } else {
+        out <- numeric(length(df))
+    }
     names(out) <- df
     if(!all(paste0(namestem, 1:max(df)) %in% names(X))) stop(paste0("Names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[k] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, cl=cl)
+        out[k] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl)
     }
     out
 }
@@ -135,10 +140,15 @@ compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(
 #' @param dgrid Distance matrix.
 #' @inheritParams compute_effective_range
 #' @export
-compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=1, cl=NULL){
+compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=1, returnFull=FALSE, cl=NULL){
     S <- computeS(X, inds=inds)
     SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl)
-    find_first_zero_cross(SCurve$SCurveMedian)*scale_factor
+    out <-  find_first_zero_cross(SCurve$SCurveMedian)*scale_factor
+    if (returnFull){
+        out <- c(range=out,
+                    SCurve)
+    }
+    return(out)
 }
 
 
