@@ -130,7 +130,7 @@ compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(
     if(!all(paste0(namestem, 1:max(df)) %in% names(X))) stop(paste0("Names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[k] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl)
+        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl)
     }
     out
 }
