@@ -6,8 +6,8 @@
 \title{Compute effective range}
 \usage{
 compute_effective_range(X, df = 3, nsamp = min(1000, nrow(X)),
-  newd = seq(0, 100, 1), scale_factor = 1, cl = NULL, inds = NULL,
-  verbose = TRUE)
+  newd = seq(0, 100, 1), scale_factor = 1, cl = NULL, namestem = "s",
+  inds = NULL, verbose = TRUE)
 
 compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
   cl = NULL)
@@ -24,6 +24,9 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 \item{scale_factor}{Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.}
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
+
+\item{namestem}{Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
+names of the form \code{s1}, \code{s2}, ...}
 
 \item{inds}{Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.}
 

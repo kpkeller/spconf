@@ -108,11 +108,13 @@ find_first_zero_cross <- function(x){
 #' @param newd Distance values at which to make loess predictions.
 #' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
+#' @param namestem Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
+#' names of the form \code{s1}, \code{s2}, ...
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
 #' @export
 #' @importFrom flexclust dist2
-compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, cl=NULL, inds=NULL,verbose=TRUE){
+compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, cl=NULL,namestem="s", inds=NULL,verbose=TRUE){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
@@ -120,10 +122,10 @@ compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(
     dgrid <- flexclust::dist2(X[, c("x", "y")], X[inds, c("x", "y")])
     out <- numeric(length(df))
     names(out) <- df
-    if(!all(paste0("s", 1:max(df)) %in% names(X))) stop('paste0("s", 1:max(df)) must all be in names of "X"')
+    if(!all(paste0(namestem, 1:max(df)) %in% names(X))) stop(paste0("Names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[k] <- compute_effective_range_nochecks(X=X[, paste0("s", 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, cl=cl)
+        out[k] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, cl=cl)
     }
     out
 }
