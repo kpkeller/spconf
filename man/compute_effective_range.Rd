@@ -5,8 +5,9 @@
 \alias{compute_effective_range_nochecks}
 \title{Compute effective range}
 \usage{
-compute_effective_range(X, df = 3, nsamp = min(100, nrow(X)),
-  newd = seq(0, 100, 1), scale_factor = 1, cl = NULL, verbose = TRUE)
+compute_effective_range(X, df = 3, nsamp = min(1000, nrow(X)),
+  newd = seq(0, 100, 1), scale_factor = 1, cl = NULL, inds = NULL,
+  verbose = TRUE)
 
 compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
   cl = NULL)
@@ -16,7 +17,7 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 
 \item{df}{Degrees of freedom to include.}
 
-\item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 100 and \code{nrow(X)}.}
+\item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.}
 
 \item{newd}{Distance values at which to make loess predictions.}
 
@@ -24,11 +25,13 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 
+\item{inds}{Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.}
+
 \item{verbose}{Control message printing.}
 
-\item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
-
 \item{dgrid}{Distance matrix.}
+
+\item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 }
 \description{
 Calculates the effective range for a spline basis matrix.

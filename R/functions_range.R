@@ -104,16 +104,19 @@ find_first_zero_cross <- function(x){
 #' @description Calculates the effective range for a spline basis matrix.
 #' @param X Matrix of spline values. Currently assumed to have columns \code{x}, \code{y}, \code{s1},\code{s2}, ...
 #' @param df Degrees of freedom to include.
-#' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 100 and \code{nrow(X)}.
+#' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions.
 #' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
+#' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
 #' @export
 #' @importFrom flexclust dist2
-compute_effective_range <- function(X, df=3, nsamp=min(100, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, cl=NULL, verbose=TRUE){
+compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 100, 1), scale_factor=1, cl=NULL, inds=NULL,verbose=TRUE){
     ngrid <- nrow(X)
-    inds <- sample(ngrid, size=nsamp)
+    if (is.null(inds)){
+        inds <- sample(ngrid, size=nsamp)
+    }
     dgrid <- flexclust::dist2(X[, c("x", "y")], X[inds, c("x", "y")])
     out <- numeric(length(df))
     names(out) <- df
