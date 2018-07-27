@@ -23,8 +23,6 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 
 \item{scale_factor}{Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.}
 
-\item{returnFull}{Should the full curve objects be returned, or just the range value.}
-
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 
 \item{namestem}{Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
@@ -35,6 +33,8 @@ names of the form \code{s1}, \code{s2}, ...}
 \item{verbose}{Control message printing.}
 
 \item{dgrid}{Distance matrix.}
+
+\item{returnCurves}{Should the mean and median curves be returned, or just the range value of where they first cross zero.}
 
 \item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 }
