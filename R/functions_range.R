@@ -28,16 +28,6 @@ fitLoess <- function(y, x, newx=x, span=0.1,...){
     lowpred
 }
 
-# Deprecated version
-compute_lowCurve_loop <- function(S, dgrid, newd){
-    n <- nrow(S)
-    lowCurveM <- matrix(NA, nrow=nrow(newd), ncol=n)
-    for (i in 1:n){#nrow(S)) {
-        lowCurveM[,i] <- fitLoess(y=S[i,], x=dgrid[, i], newd=newd)
-    }
-    lowCurveM
-}
-
 
 #' @title Compute loess curves for smoothing matrix
 #' @description Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.
@@ -107,7 +97,7 @@ find_first_zero_cross <- function(x){
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions.
 #' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
-#' @param returnCurves Should the mean and median curves be returned, or just the range value of where they first cross zero.
+#' @param returnFull Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
 #' names of the form \code{s1}, \code{s2}, ...

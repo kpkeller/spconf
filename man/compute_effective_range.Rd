@@ -5,12 +5,28 @@
 \alias{compute_effective_range_nochecks}
 \title{Compute effective range}
 \usage{
-compute_effective_range(X, df = 3, nsamp = min(1000, nrow(X)),
-  newd = seq(0, 100, 1), scale_factor = 1, returnFull = FALSE,
-  cl = NULL, namestem = "s", inds = NULL, verbose = TRUE)
+compute_effective_range(
+  X,
+  df = 3,
+  nsamp = min(1000, nrow(X)),
+  newd = seq(0, 100, 1),
+  scale_factor = 1,
+  returnFull = FALSE,
+  cl = NULL,
+  namestem = "s",
+  inds = NULL,
+  verbose = TRUE
+)
 
-compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
-  returnFull = FALSE, cl = NULL)
+compute_effective_range_nochecks(
+  X,
+  inds,
+  newd,
+  dgrid,
+  scale_factor = 1,
+  returnFull = FALSE,
+  cl = NULL
+)
 }
 \arguments{
 \item{X}{Matrix of spline values. Currently assumed to have columns \code{x}, \code{y}, \code{s1},\code{s2}, ...}
@@ -23,20 +39,18 @@ compute_effective_range_nochecks(X, inds, newd, dgrid, scale_factor = 1,
 
 \item{scale_factor}{Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.}
 
+\item{returnFull}{Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).}
+
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 
 \item{namestem}{Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
 names of the form \code{s1}, \code{s2}, ...}
 
-\item{inds}{Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.}
+\item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 
 \item{verbose}{Control message printing.}
 
 \item{dgrid}{Distance matrix.}
-
-\item{returnCurves}{Should the mean and median curves be returned, or just the range value of where they first cross zero.}
-
-\item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 }
 \description{
 Calculates the effective range for a spline basis matrix.
