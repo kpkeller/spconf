@@ -4,7 +4,7 @@
 \alias{fitLoess}
 \title{Fit a loess curve}
 \usage{
-fitLoess(y, x, newx = x, span = 0.1, ...)
+fitLoess(y, x, newx = x, span = 0.5, ...)
 }
 \arguments{
 \item{y}{Dependent variable values}
@@ -13,10 +13,18 @@ fitLoess(y, x, newx = x, span = 0.1, ...)
 
 \item{newx}{Values of x to use for prediction.}
 
-\item{span}{Passed to \code{\link[stats]{loess}}.}
+\item{span}{Controls the amount of smoothing. Passed to \code{\link[stats]{loess}}; see that function for details.}
 
 \item{...}{Additional arguments passed to \code{\link[stats]{loess}}}
 }
 \description{
 Wrapper function for fitting and predicting from \code{loess()}.
+}
+\examples{
+x <- seq(0, 5, length=50)
+y <- cos(4*x) + rnorm(50, sd=0.5)
+xplot <- seq(0, 5, length=200)
+lfit <- fitLoess(y=y, x=x, newx=xplot, span=0.2)
+plot(x, y)
+points(xplot, lfit, type="l")
 }

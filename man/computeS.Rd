@@ -12,11 +12,20 @@ computeS(x, inds = 1:nrow(x))
 \item{inds}{Indices to compute smoothing matrix for.}
 }
 \value{
-An \eqn{n}-by-\eqn{N}, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
+An \eqn{n}-by-\eqn{n} matrix, where \eqn{n} is the number of rows in \code{x}.
 }
 \description{
-Calculates the matrix \code{X(X'X)^(-1)X'}.
+Calculates the smothing (or "hat") matrix from a design matrix.
 }
 \details{
-When \code{x} has many rows, this can be quite large.
+Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. Note that \code{x} must be full-rank.
+}
+\examples{
+# Simple design matrix case
+X <- cbind(1, rep(c(0, 1), each=4))
+S <- computeS(X)
+# More complex example
+xloc <- runif(n=100, min=0, max=10)
+X <- splines::ns(x=xloc, df=4, intercept=TRUE)
+S <- computeS(X)
 }

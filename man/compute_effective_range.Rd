@@ -9,13 +9,14 @@ compute_effective_range(
   X,
   df = 3,
   nsamp = min(1000, nrow(X)),
-  newd = seq(0, 100, 1),
+  newd = seq(0, 1, 100),
   scale_factor = 1,
   returnFull = FALSE,
   cl = NULL,
-  namestem = "s",
+  namestem = "",
   inds = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  span = 0.1
 )
 
 compute_effective_range_nochecks(
@@ -25,7 +26,8 @@ compute_effective_range_nochecks(
   dgrid,
   scale_factor = 1,
   returnFull = FALSE,
-  cl = NULL
+  cl = NULL,
+  span = span
 )
 }
 \arguments{
@@ -43,15 +45,37 @@ compute_effective_range_nochecks(
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 
-\item{namestem}{Stem of names of columns of X corresponding to evaluated splines. Defaults to \code{"s"}, meaning
-names of the form \code{s1}, \code{s2}, ...}
+\item{namestem}{Stem of names of columns of X corresponding to evaluated splines.
+Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 
 \item{verbose}{Control message printing.}
 
+\item{span}{Passed to \code{\link{fitLoess}}}
+
 \item{dgrid}{Distance matrix.}
 }
 \description{
 Calculates the effective range for a spline basis matrix.
+}
+\examples{
+
+xloc <- runif(n=100, min=0, max=10)
+X <- splines::ns(x=xloc, df=4, intercept=TRUE)
+colnames(X) <- paste0("s", 1:ncol(X))
+xplot <- 0:10
+#er <- compute_effective_range(X=X, df=4, newd=xplot, namestem="s")
+
+# Simulation settings
+M <- 16
+tprs_df <- 10
+si <- seq(0, 1, length=M+1)[-(M+1)]
+gridcoords <- expand.grid(x=si, y=si)
+tprsSC <- mgcv::smoothCon(mgcv::s(x, y, fx=TRUE, k=tprs_df + 1), data= gridcoords)
+tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
+# Re-order the TPRS
+tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
+tprsX <- cbind(gridcoords ,tprsX)
+compute_effective_range(tprsX)
 }

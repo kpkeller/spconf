@@ -4,7 +4,7 @@
 \alias{compute_lowCurve}
 \title{Compute loess curves for smoothing matrix}
 \usage{
-compute_lowCurve(S, dgrid, newd, cl = NULL)
+compute_lowCurve(S, dgrid, newd, cl = NULL, span = 0.1)
 }
 \arguments{
 \item{S}{Smoothing matrix.}
@@ -14,9 +14,22 @@ compute_lowCurve(S, dgrid, newd, cl = NULL)
 \item{newd}{Distances to use for loess prediction.}
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
+
+\item{span}{Passed to \code{\link{fitLoess}}}
 }
 \description{
 Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.
+}
+\examples{
+
+xloc <- runif(n=100, min=0, max=10)
+X <- splines::ns(x=xloc, df=4, intercept=TRUE)
+S <- computeS(X)
+d <- as.matrix(dist(xloc))
+xplot <- 0:10
+lC <- compute_lowCurve(S, dgrid=d, newd=xplot)
+matplot(xplot, lC$SCurve, type="l", col="black")
+points(xplot, lC$SCurveMedian, type="l", col="red")
 }
 \seealso{
 \code{\link{computeS}}
