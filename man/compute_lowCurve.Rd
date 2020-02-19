@@ -7,9 +7,9 @@
 compute_lowCurve(S, dgrid, newd, cl = NULL, span = 0.1)
 }
 \arguments{
-\item{S}{Smoothing matrix.}
+\item{S}{Smoothing matrix, or a subset of columns from a smoothing matrix.}
 
-\item{dgrid}{Distance matrix.}
+\item{dgrid}{Distance matrix, or a subset of columns from a distance matrix.}
 
 \item{newd}{Distances to use for loess prediction.}
 
@@ -19,6 +19,9 @@ compute_lowCurve(S, dgrid, newd, cl = NULL, span = 0.1)
 }
 \description{
 Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.
+}
+\details{
+For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{dgrid}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{dgrid}.
 }
 \examples{
 
@@ -32,5 +35,5 @@ matplot(xplot, lC$SCurve, type="l", col="black")
 points(xplot, lC$SCurveMedian, type="l", col="red")
 }
 \seealso{
-\code{\link{computeS}}
+\code{\link{computeS}} \code{\link{fitLoess}}
 }

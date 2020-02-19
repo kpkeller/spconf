@@ -1,11 +1,11 @@
 
 #' @title Compute Smoothing Matrix
 #' @description Calculates the smothing (or "hat") matrix from a design matrix.
-#' @param x Matrix of spline values. A data frame is coerced into a matrix.
+#' @param x Matrix of spline values, assumed to have full rank. A data frame is coerced into a matrix.
 #' @param inds Indices to compute smoothing matrix for.
-#' @details Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. Note that \code{x} must be full-rank.
+#' @details Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. The \code{inds} argument can be used to return a subset of columns from \code{S}.
 #'
-#' @return  An \eqn{n}-by-\eqn{n} matrix, where \eqn{n} is the number of rows in \code{x}.
+#' @return  An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
 #' @export
 #' @examples
 #' # Simple design matrix case
@@ -15,9 +15,10 @@
 #' xloc <- runif(n=100, min=0, max=10)
 #' X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 #' S <- computeS(X)
+#' S2 <- computeS(X, inds=1:4)
 computeS <- function(x, inds=1:nrow(x)){
     x <- as.matrix(x)
-    S <- x[inds,] %*% solve(crossprod(x), t(x))
+    S <- x %*% solve(crossprod(x), t(x[inds,]))
  S
 }
 
@@ -47,12 +48,13 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 
 #' @title Compute loess curves for smoothing matrix
 #' @description Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.
-#' @param S Smoothing matrix.
-#' @param dgrid Distance matrix.
+#' @param S Smoothing matrix, or a subset of columns from a smoothing matrix.
+#' @param dgrid Distance matrix, or a subset of columns from a distance matrix.
 #' @param newd Distances to use for loess prediction.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param span Passed to \code{\link{fitLoess}}
-#' @seealso \code{\link{computeS}}
+#' @details For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{dgrid}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{dgrid}.
+#' @seealso \code{\link{computeS}} \code{\link{fitLoess}}
 #' @export
 #' @importFrom parallel makeCluster clusterExport clusterMap stopCluster
 #' @importFrom stats median
@@ -67,11 +69,13 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' matplot(xplot, lC$SCurve, type="l", col="black")
 #' points(xplot, lC$SCurveMedian, type="l", col="red")
 compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
+    if (nrow(S)!=ncol(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
+    if (ncol(S)!=nrow(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
     if (is.null(cl)){
-        n <- nrow(S)
+        n <- col(S)
         lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
         for (i in 1:n){#nrow(S)) {
-            lowCurveM[,i] <- fitLoess(y=S[i,], x=dgrid[, i], newx=newd, span=span)
+            lowCurveM[,i] <- fitLoess(y=S[,i], x=dgrid[, i], newx=newd, span=span)
         }
     } else  {
         stop_cluster <- FALSE
@@ -81,7 +85,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
         }  else  if (!inherits(cl, "cluster")){
             stop("'cl' should be NULL, a cluster object, or a non-negative number indicating number of cores.")
         }
-        S_list <- as.list(as.data.frame(t(S)))
+        S_list <- as.list(as.data.frame(S))
         dgrid_list <- as.list(as.data.frame(dgrid))
         newfitLoess <- function(s, d) fitLoess(s, d, newx=newd, span=span)
         environment(newfitLoess) <- .GlobalEnv
