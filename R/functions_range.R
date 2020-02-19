@@ -2,7 +2,7 @@
 #' @title Compute Smoothing Matrix
 #' @description Calculates the smothing (or "hat") matrix from a design matrix.
 #' @param x Matrix of spline values, assumed to have full rank. A data frame is coerced into a matrix.
-#' @param inds Indices to compute smoothing matrix for.
+#' @param inds Column indices of smoothing matrix to return (corresponding to rows in \code{x}).
 #' @details Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. The \code{inds} argument can be used to return a subset of columns from \code{S}.
 #'
 #' @return  An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
@@ -21,7 +21,6 @@ computeS <- function(x, inds=1:nrow(x)){
     S <- x %*% solve(crossprod(x), t(x[inds,]))
  S
 }
-
 
 #' @title Fit a loess curve
 #' @description Wrapper function for fitting and predicting from \code{loess()}.
@@ -54,6 +53,7 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param span Passed to \code{\link{fitLoess}}
 #' @details For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{dgrid}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{dgrid}.
+#' For a large number of locations, this procedure may be somewhat slow. The \code{cl} argument can be used to parallelize the operation using \code{\link[parallel]{clusterMap}}.
 #' @seealso \code{\link{computeS}} \code{\link{fitLoess}}
 #' @export
 #' @importFrom parallel makeCluster clusterExport clusterMap stopCluster
@@ -72,7 +72,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
     if (nrow(S)!=ncol(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
     if (ncol(S)!=nrow(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
     if (is.null(cl)){
-        n <- col(S)
+        n <- ncol(S)
         lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
         for (i in 1:n){#nrow(S)) {
             lowCurveM[,i] <- fitLoess(y=S[,i], x=dgrid[, i], newx=newd, span=span)
@@ -107,7 +107,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
 #' @title Find first zero
 #' @description Rudimentary root finding function to calculate first cross of y-axis
 #' @param x Function values, assumed to be ordered
-#' @return Index of first value of \code{x} that lies below 0. Decimal values will be returned using a basic interpolation of the two values straddling 0.
+#' @return Index of first value of \code{x} that lies below 0. Decimal values will be returned using a simple interpolation of the two values straddling 0.
 #' @export
 find_first_zero_cross <- function(x){
     upper_ind <- min(which(x<0))
@@ -120,11 +120,12 @@ find_first_zero_cross <- function(x){
 
 #' @title Compute effective range
 #' @description Calculates the effective range for a spline basis matrix.
-#' @param X Matrix of spline values. Currently assumed to have columns \code{x}, \code{y}, \code{s1},\code{s2}, ...
-#' @param df Degrees of freedom to include.
+#' @param X Matrix of spline values. See \code{namestem} for expected column names.
+#' @param coords Matrix of point coordinates. Defaults to the \code{x} and \code{y} columns of \code{X}, but can have a different number of columns for settings with different dimensions.
+#' @param df Degrees of freedom for which effective range should be computed.
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
-#' @param newd Distance values at which to make loess predictions.
-#' @param scale_factor Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.
+#' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.
+#' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.
 #' @param returnFull Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines.
@@ -132,15 +133,16 @@ find_first_zero_cross <- function(x){
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
 #' @param span Passed to \code{\link{fitLoess}}
+#' @details The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
+#' @seealso \code{\link{compute_lowCurve}}
 #' @export
 #' @importFrom flexclust dist2
 #' @examples
-#'
 #' xloc <- runif(n=100, min=0, max=10)
 #' X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 #' colnames(X) <- paste0("s", 1:ncol(X))
 #' xplot <- 0:10
-#' #er <- compute_effective_range(X=X, df=4, newd=xplot, namestem="s")
+#' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
 #'
 #' # Simulation settings
 #' M <- 16
@@ -149,23 +151,23 @@ find_first_zero_cross <- function(x){
 #' gridcoords <- expand.grid(x=si, y=si)
 #' tprsSC <- mgcv::smoothCon(mgcv::s(x, y, fx=TRUE, k=tprs_df + 1), data= gridcoords)
 #' tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
-#' # Re-order the TPRS
+#' # Re-order the TPRS to put linear terms first
 #' tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
-#' tprsX <- cbind(gridcoords ,tprsX)
-#' compute_effective_range(tprsX)
-compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
+#' colnames(tprsX) <- 1:ncol(tprsX)
+#' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10)
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
-    dgrid <- flexclust::dist2(X[, c("x", "y")], X[inds, c("x", "y")])
+    dgrid <- flexclust::dist2(coords, coords[inds,])
     if(returnFull){
         out <- vector("list", length(df))
     } else {
         out <- numeric(length(df))
     }
     names(out) <- df
-    if(!all(paste0(namestem, 1:max(df)) %in% names(X))) stop(paste0("Names of X must take the form ", namestem, max(df)))
+    if(!all(paste0(namestem, 1:max(df)) %in% colnames(X))) stop(paste0("Column names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
         out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
@@ -177,7 +179,7 @@ compute_effective_range <- function(X, df=3, nsamp=min(1000, nrow(X)), newd=seq(
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
 #' @param dgrid Distance matrix.
 #' @export
-compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=1, returnFull=FALSE, cl=NULL, span=span){
+compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
     S <- computeS(X, inds=inds)
     SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl, span=span)
     out <-  find_first_zero_cross(SCurve$SCurveMedian)*scale_factor

@@ -10,7 +10,7 @@ find_first_zero_cross(x)
 \item{x}{Function values, assumed to be ordered}
 }
 \value{
-Index of first value of \code{x} that lies below 0. Decimal values will be returned using a basic interpolation of the two values straddling 0.
+Index of first value of \code{x} that lies below 0. Decimal values will be returned using a simple interpolation of the two values straddling 0.
 }
 \description{
 Rudimentary root finding function to calculate first cross of y-axis

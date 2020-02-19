@@ -7,6 +7,7 @@
 \usage{
 compute_effective_range(
   X,
+  coords = X[, c("x", "y")],
   df = 3,
   nsamp = min(1000, nrow(X)),
   newd = seq(0, 1, 100),
@@ -27,19 +28,21 @@ compute_effective_range_nochecks(
   scale_factor = 1,
   returnFull = FALSE,
   cl = NULL,
-  span = span
+  span = 0.1
 )
 }
 \arguments{
-\item{X}{Matrix of spline values. Currently assumed to have columns \code{x}, \code{y}, \code{s1},\code{s2}, ...}
+\item{X}{Matrix of spline values. See \code{namestem} for expected column names.}
 
-\item{df}{Degrees of freedom to include.}
+\item{coords}{Matrix of point coordinates. Defaults to the \code{x} and \code{y} columns of \code{X}, but can have a different number of columns for settings with different dimensions.}
+
+\item{df}{Degrees of freedom for which effective range should be computed.}
 
 \item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.}
 
-\item{newd}{Distance values at which to make loess predictions.}
+\item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.}
 
-\item{scale_factor}{Factor by which range should be scaled. Usually physical distance corresponding to resolution of grid.}
+\item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.}
 
 \item{returnFull}{Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).}
 
@@ -59,13 +62,15 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 \description{
 Calculates the effective range for a spline basis matrix.
 }
+\details{
+The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
+}
 \examples{
-
 xloc <- runif(n=100, min=0, max=10)
 X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 colnames(X) <- paste0("s", 1:ncol(X))
 xplot <- 0:10
-#er <- compute_effective_range(X=X, df=4, newd=xplot, namestem="s")
+compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
 
 # Simulation settings
 M <- 16
@@ -74,8 +79,11 @@ si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
 tprsSC <- mgcv::smoothCon(mgcv::s(x, y, fx=TRUE, k=tprs_df + 1), data= gridcoords)
 tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
-# Re-order the TPRS
+# Re-order the TPRS to put linear terms first
 tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
-tprsX <- cbind(gridcoords ,tprsX)
-compute_effective_range(tprsX)
+colnames(tprsX) <- 1:ncol(tprsX)
+compute_effective_range(X=tprsX, coords=gridcoords, df=3:10)
+}
+\seealso{
+\code{\link{compute_lowCurve}}
 }

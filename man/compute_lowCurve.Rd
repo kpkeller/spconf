@@ -22,6 +22,7 @@ Calculates a loess curve for the smoothing matrix entries, as a function of dist
 }
 \details{
 For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{dgrid}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{dgrid}.
+For a large number of locations, this procedure may be somewhat slow. The \code{cl} argument can be used to parallelize the operation using \code{\link[parallel]{clusterMap}}.
 }
 \examples{
 

@@ -9,7 +9,7 @@ computeS(x, inds = 1:nrow(x))
 \arguments{
 \item{x}{Matrix of spline values, assumed to have full rank. A data frame is coerced into a matrix.}
 
-\item{inds}{Indices to compute smoothing matrix for.}
+\item{inds}{Column indices of smoothing matrix to return (corresponding to rows in \code{x}).}
 }
 \value{
 An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
