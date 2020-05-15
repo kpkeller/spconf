@@ -17,6 +17,7 @@
 #' S <- computeS(X)
 #' S2 <- computeS(X, inds=1:4)
 computeS <- function(x, inds=1:nrow(x)){
+    if (!inherits(x, "matrix") && !inherits(x, "data.frame")) stop("'x' must be a matrix or data frame.")
     x <- as.matrix(x)
     S <- x %*% solve(crossprod(x), t(x[inds,]))
  S
