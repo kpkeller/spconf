@@ -133,7 +133,7 @@ find_first_zero_cross <- function(x){
 #' Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
-#' @param span Passed to \code{\link{fitLoess}}
+#' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.
 #' @details The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 #' @seealso \code{\link{compute_lowCurve}}
 #' @export
@@ -145,7 +145,6 @@ find_first_zero_cross <- function(x){
 #' xplot <- 0:10
 #' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
 #'
-#' # Simulation settings
 #' M <- 16
 #' tprs_df <- 10
 #' si <- seq(0, 1, length=M+1)[-(M+1)]
@@ -155,7 +154,7 @@ find_first_zero_cross <- function(x){
 #' # Re-order the TPRS to put linear terms first
 #' tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
 #' colnames(tprsX) <- 1:ncol(tprsX)
-#' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10)
+#' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
 compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){

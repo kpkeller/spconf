@@ -8,5 +8,5 @@
 #' for unmeasured spatial confounding in regression models, but the
 #' calculation of effective range can be applied to smoothing
 #' matrices in other contexts. For algorithmic details see
-#' <https://arxiv.org/abs/1909.11161>
+#' <https://doi.org/10.1111/rssa.12556>
 NULL

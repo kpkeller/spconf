@@ -55,7 +55,7 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{verbose}{Control message printing.}
 
-\item{span}{Passed to \code{\link{fitLoess}}}
+\item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.}
 
 \item{dgrid}{Distance matrix.}
 }
@@ -72,7 +72,6 @@ colnames(X) <- paste0("s", 1:ncol(X))
 xplot <- 0:10
 compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
 
-# Simulation settings
 M <- 16
 tprs_df <- 10
 si <- seq(0, 1, length=M+1)[-(M+1)]
@@ -82,7 +81,7 @@ tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
 # Re-order the TPRS to put linear terms first
 tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
 colnames(tprsX) <- 1:ncol(tprsX)
-compute_effective_range(X=tprsX, coords=gridcoords, df=3:10)
+compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
 }
 \seealso{
 \code{\link{compute_lowCurve}}
