@@ -70,8 +70,8 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' matplot(xplot, lC$SCurve, type="l", col="black")
 #' points(xplot, lC$SCurveMedian, type="l", col="red")
 compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
-    if (nrow(S)!=ncol(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
-    if (ncol(S)!=nrow(dgrid)) stop("Rows in S must correspond to columns in dgrid.")
+    if (nrow(S)!=nrow(dgrid)) stop("Rows in S must correspond to rows in dgrid.")
+    if (ncol(S)!=ncol(dgrid)) stop("Columns in S must correspond to columns in dgrid.")
     if (is.null(cl)){
         n <- ncol(S)
         lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
