@@ -8,13 +8,13 @@ Adjustment
 
 This package is designed to calculate the *effective bandwidth* of a
 spatial smoothing matrix, following the procedure described by Keller
-and Szprio (2020).
+and Szpiro (2020).
 
 ## Installation
 
 The `spconf` package can be installed by running
 
-    devtools::install_github("jpkeller/spconf")
+    devtools::install_github("kpkeller/spconf")
 
 ## Computing Effective Range
 
