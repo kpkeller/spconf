@@ -117,6 +117,32 @@ find_first_zero_cross <- function(x){
     lower_ind + frac_ind
 }
 
+## NEW FUNCTIONS -- need appropriate write-up ##
+find_zeros_cross <- function(dgrid=NA, S=NA){
+    out <- rep(0, ncol(dgrid))
+
+    for(i in 1:ncol(dgrid)){
+        x <- cbind(dgrid[,i], S[,i])
+        x <- x[order(x[,1]),]
+
+        if(min(x[,2]) >= 0){
+            cross_vals[i] <- NA
+        }else{
+            upper_ind <- min(which(x[,2] < 0))
+            # lower_ind <- upper_ind - 1
+            # frac_dist <- x[lower_ind,2]/(x[lower_ind,2] - x[upper_ind,2])
+            # cross_vals[i] <- x[lower_ind,1] + (x[upper_ind,1] - x[lower_ind,1])*frac_dist
+            out[i] <- x[upper_ind,1]
+        }
+    }
+    out
+}
+
+compute_median_zeros <- function(zeros){
+    out <- median(zeros, na.rm =T)
+    out
+}
+
 
 
 #' @title Compute effective range
@@ -155,13 +181,13 @@ find_first_zero_cross <- function(x){
 #' tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
 #' colnames(tprsX) <- 1:ncol(tprsX)
 #' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
-compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), LOESS = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
     dgrid <- flexclust::dist2(coords, coords[inds,])
-    if(returnFull){
+    if(returnFull & LOESS){
         out <- vector("list", length(df))
     } else {
         out <- numeric(length(df))
@@ -170,7 +196,7 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
     if(!all(paste0(namestem, 1:max(df)) %in% colnames(X))) stop(paste0("Column names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
+        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, LOESS = LOESS, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
     }
     out
 }
@@ -179,10 +205,15 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
 #' @param dgrid Distance matrix.
 #' @export
-compute_effective_range_nochecks <- function(X, inds, newd, dgrid, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
+compute_effective_range_nochecks <- function(X, inds, newd, dgrid, LOESS = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
     S <- computeS(X, inds=inds)
-    SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl, span=span)
-    out <-  find_first_zero_cross(SCurve$SCurveMedian)*scale_factor
+    if(LOESS){
+        SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl, span=span)
+        out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
+    }else{
+        zeros <-  find_zeros_cross(dgrid = dgrid, S = S)
+        out <- compute_median_zeros(zeros = zeros)
+    }
     if (returnFull){
         out <- list(range=out,
                     curve_median=SCurve$SCurveMedian,

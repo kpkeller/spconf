@@ -37,6 +37,31 @@ compute_effective_range_nochecks <- function(X, inds, newd, dgrid, LOESS = FALSE
     return(out)
 }
 
+
+find_zeros_cross <- function(dgrid=NA, S=NA){
+    out <- rep(0, ncol(dgrid))
+
+    for(i in 1:ncol(dgrid)){
+        x <- cbind(dgrid[,i], S[,i])
+        x <- x[order(x[,1]),]
+
+        if(min(x[,2]) >= 0){
+            cross_vals[i] <- NA
+        }else{
+            upper_ind <- min(which(x[,2] < 0))
+            # lower_ind <- upper_ind - 1
+            # frac_dist <- x[lower_ind,2]/(x[lower_ind,2] - x[upper_ind,2])
+            # cross_vals[i] <- x[lower_ind,1] + (x[upper_ind,1] - x[lower_ind,1])*frac_dist
+            out[i] <- x[upper_ind,1]
+        }
+    }
+    out
+}
+
+compute_median_zeros <- function(zeros){
+    out <- median(zeros, na.rm =T)
+    out
+}
 ## Added new computing option
 
 find_first_zero_cross <- function(x=NA, dgrid=NA, S=NA, LOESS=FALSE){
