@@ -138,11 +138,6 @@ find_zeros_cross <- function(dgrid=NA, S=NA){
     out
 }
 
-compute_median_zeros <- function(zeros){
-    out <- median(zeros, na.rm =T)
-    out
-}
-
 
 
 #' @title Compute effective range
@@ -212,7 +207,7 @@ compute_effective_range_nochecks <- function(X, inds, newd, dgrid, smoothedCurve
         out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
     }else{
         zeros <-  find_zeros_cross(dgrid = dgrid, S = S)
-        out <- compute_median_zeros(zeros = zeros)
+        out <- median(zeros, na.rm =T)
     }
     if (returnFull){
         out <- list(range=out,
