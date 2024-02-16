@@ -117,7 +117,13 @@ find_first_zero_cross <- function(x){
     lower_ind + frac_ind
 }
 
-## NEW FUNCTIONS -- need appropriate write-up ##
+# Function for finding the smallest distance that has a
+# negative smoothing weight for each column of the smoothing matrix
+#' @title Find first zeros
+#' @description For each column of smoothing matrix, determines smallest distance that corresponds with a negative smoothing weight
+#' @param dgrid Distance matrix, or a subset of columns from a distance matrix.
+#' @param S Smoothing matrix, or a subset of columns from a smoothing matrix.
+#' @export
 find_zeros_cross <- function(dgrid=NA, S=NA){
     out <- rep(0, ncol(dgrid))
 
@@ -126,7 +132,7 @@ find_zeros_cross <- function(dgrid=NA, S=NA){
         x <- x[order(x[,1]),]
 
         if(min(x[,2]) >= 0){
-            cross_vals[i] <- NA
+            out[i] <- NA
         }else{
             upper_ind <- min(which(x[,2] < 0))
             # lower_ind <- upper_ind - 1
@@ -148,6 +154,7 @@ find_zeros_cross <- function(dgrid=NA, S=NA){
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.
 #' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.
+#' @param smoothedCurve Should a smoothed curve be fit to the relationship between the distances and the smoothed weights (TRUE), or just find the smallest distance that has a negative weight (FALSE)
 #' @param returnFull Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines.
