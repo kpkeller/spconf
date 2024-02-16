@@ -181,13 +181,13 @@ compute_median_zeros <- function(zeros){
 #' tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
 #' colnames(tprsX) <- 1:ncol(tprsX)
 #' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
-compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), LOESS = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
     dgrid <- flexclust::dist2(coords, coords[inds,])
-    if(returnFull & LOESS){
+    if(returnFull & smoothedCurve){
         out <- vector("list", length(df))
     } else {
         out <- numeric(length(df))
@@ -196,7 +196,7 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
     if(!all(paste0(namestem, 1:max(df)) %in% colnames(X))) stop(paste0("Column names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, LOESS = LOESS, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
+        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, smoothedCurve = smoothedCurve, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
     }
     out
 }
@@ -205,9 +205,9 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
 #' @param dgrid Distance matrix.
 #' @export
-compute_effective_range_nochecks <- function(X, inds, newd, dgrid, LOESS = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
+compute_effective_range_nochecks <- function(X, inds, newd, dgrid, smoothedCurve = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
     S <- computeS(X, inds=inds)
-    if(LOESS){
+    if(smoothedCurve){
         SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl, span=span)
         out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
     }else{
