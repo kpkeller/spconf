@@ -1,6 +1,14 @@
+# Functions in File #
+# computeS
+# fitLoess
+# compute_lowCurve
+# find_first_zero_cross
+# find_zeros_cross
+# compute_effective_range
+# compute_effective_range_nochecks
 
 #' @title Compute Smoothing Matrix
-#' @description Calculates the smothing (or "hat") matrix from a design matrix.
+#' @description Calculates the smoothing (or "hat") matrix from a design matrix.
 #' @param x Matrix of spline values, assumed to have full rank. A data frame is coerced into a matrix.
 #' @param inds Column indices of smoothing matrix to return (corresponding to rows in \code{x}).
 #' @details Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. The \code{inds} argument can be used to return a subset of columns from \code{S}.
@@ -49,11 +57,11 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' @title Compute loess curves for smoothing matrix
 #' @description Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.
 #' @param S Smoothing matrix, or a subset of columns from a smoothing matrix.
-#' @param dgrid Distance matrix, or a subset of columns from a distance matrix.
+#' @param D Distance matrix, or a subset of columns from a distance matrix.
 #' @param newd Distances to use for loess prediction.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param span Passed to \code{\link{fitLoess}}
-#' @details For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{dgrid}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{dgrid}.
+#' @details For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{D}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{D}.
 #' For a large number of locations, this procedure may be somewhat slow. The \code{cl} argument can be used to parallelize the operation using \code{\link[parallel]{clusterMap}}.
 #' @seealso \code{\link{computeS}} \code{\link{fitLoess}}
 #' @export
@@ -66,17 +74,17 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' S <- computeS(X)
 #' d <- as.matrix(dist(xloc))
 #' xplot <- 0:10
-#' lC <- compute_lowCurve(S, dgrid=d, newd=xplot)
+#' lC <- compute_lowCurve(S, D=d, newd=xplot)
 #' matplot(xplot, lC$SCurve, type="l", col="black")
 #' points(xplot, lC$SCurveMedian, type="l", col="red")
-compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
-    if (nrow(S)!=nrow(dgrid)) stop("Rows in S must correspond to rows in dgrid.")
-    if (ncol(S)!=ncol(dgrid)) stop("Columns in S must correspond to columns in dgrid.")
+compute_lowCurve <- function(S, D, newd, cl=NULL, span=0.1){
+    if (nrow(S)!=nrow(D)) stop("Rows in S must correspond to rows in D.")
+    if (ncol(S)!=ncol(D)) stop("Columns in S must correspond to columns in D.")
     if (is.null(cl)){
         n <- ncol(S)
         lowCurveM <- matrix(NA, nrow=length(newd), ncol=n)
         for (i in 1:n){#nrow(S)) {
-            lowCurveM[,i] <- fitLoess(y=S[,i], x=dgrid[, i], newx=newd, span=span)
+            lowCurveM[,i] <- fitLoess(y=S[,i], x=D[, i], newx=newd, span=span)
         }
     } else  {
         stop_cluster <- FALSE
@@ -87,11 +95,11 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
             stop("'cl' should be NULL, a cluster object, or a non-negative number indicating number of cores.")
         }
         S_list <- as.list(as.data.frame(S))
-        dgrid_list <- as.list(as.data.frame(dgrid))
+        D_list <- as.list(as.data.frame(D))
         newfitLoess <- function(s, d) fitLoess(s, d, newx=newd, span=span)
         environment(newfitLoess) <- .GlobalEnv
-        clusterExport(cl=cl, varlist=c("S_list", "dgrid_list", "fitLoess", "newd", "span"), envir=environment())
-        lowCurveM <- clusterMap(cl=cl,newfitLoess , s=S_list, d=dgrid_list, SIMPLIFY=TRUE)
+        clusterExport(cl=cl, varlist=c("S_list", "D_list", "fitLoess", "newd", "span"), envir=environment())
+        lowCurveM <- clusterMap(cl=cl,newfitLoess , s=S_list, d=D_list, SIMPLIFY=TRUE)
         if (stop_cluster) stopCluster(cl) # Stop process, if function started it.
     }
     lowCurveMedian <- apply(lowCurveM, 1, stats::median, na.rm = TRUE)
@@ -105,8 +113,7 @@ compute_lowCurve <- function(S, dgrid, newd, cl=NULL, span=0.1){
 
 # Function for getting zero via linear interpolation between
 # the two points straddling zero.
-#' @title Find first zero
-#' @description Rudimentary root finding function to calculate first cross of y-axis
+#' @rdname find_zeros_cross
 #' @param x Function values, assumed to be ordered
 #' @return Index of first value of \code{x} that lies below 0. Decimal values will be returned using a simple interpolation of the two values straddling 0.
 #' @export
@@ -121,14 +128,17 @@ find_first_zero_cross <- function(x){
 # negative smoothing weight for each column of the smoothing matrix
 #' @title Find first zeros
 #' @description For each column of smoothing matrix, determines smallest distance that corresponds with a negative smoothing weight
-#' @param dgrid Distance matrix, or a subset of columns from a distance matrix.
+#' @param D Distance matrix, or a subset of columns from a distance matrix.
 #' @param S Smoothing matrix, or a subset of columns from a smoothing matrix.
 #' @export
-find_zeros_cross <- function(dgrid=NA, S=NA){
-    out <- rep(0, ncol(dgrid))
+find_zeros_cross <- function(D, S){
+    if (nrow(S)!=nrow(D)) stop("Rows in S must correspond to rows in D.")
+    if (ncol(S)!=ncol(D)) stop("Columns in S must correspond to columns in D.")
 
-    for(i in 1:ncol(dgrid)){
-        x <- cbind(dgrid[,i], S[,i])
+    out <- rep(0, ncol(D))
+
+    for(i in 1:ncol(D)){
+        x <- cbind(D[,i], S[,i])
         x <- x[order(x[,1]),]
 
         if(min(x[,2]) >= 0){
@@ -188,7 +198,7 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
-    dgrid <- flexclust::dist2(coords, coords[inds,])
+    D <- flexclust::dist2(coords, coords[inds,])
     if(returnFull & smoothedCurve){
         out <- vector("list", length(df))
     } else {
@@ -198,22 +208,22 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
     if(!all(paste0(namestem, 1:max(df)) %in% colnames(X))) stop(paste0("Column names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
         cat("Df = ", df[k], "\n")
-        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, smoothedCurve = smoothedCurve, newd=newd, dgrid=dgrid, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
+        out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, smoothedCurve = smoothedCurve, newd=newd, D=D, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
     }
     out
 }
 
 #' @rdname compute_effective_range
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
-#' @param dgrid Distance matrix.
+#' @param D Distance matrix.
 #' @export
-compute_effective_range_nochecks <- function(X, inds, newd, dgrid, smoothedCurve = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
+compute_effective_range_nochecks <- function(X, inds, newd, D, smoothedCurve = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
     S <- computeS(X, inds=inds)
     if(smoothedCurve){
-        SCurve <- compute_lowCurve(S=S, dgrid=dgrid, newd=newd, cl=cl, span=span)
+        SCurve <- compute_lowCurve(S=S, D=D, newd=newd, cl=cl, span=span)
         out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
     }else{
-        zeros <-  find_zeros_cross(dgrid = dgrid, S = S)
+        zeros <-  find_zeros_cross(D = D, S = S)
         out <- median(zeros, na.rm =T)
     }
     if (returnFull){
