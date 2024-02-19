@@ -8,7 +8,7 @@ Description: Computes the effective range of a smoothing matrix,
     This is motivated by the application of spatial splines for adjusting 
     for unmeasured spatial confounding in regression models, but the
     calculation of effective range can be applied to smoothing 
-    matrices in other contexts. For algorithmic details see Keller and Szpiro (2020)
+    matrices in other contexts. For algorithmic details of one version see Keller and Szpiro (2020)
     "Selecting a Scale for Spatial Confounding Adjustment"
     <https://doi.org/10.1111/rssa.12556>.
 Depends: R (>= 3.5)
