@@ -10,6 +10,7 @@ compute_effective_range(
   coords = X[, c("x", "y")],
   df = 3,
   nsamp = min(1000, nrow(X)),
+  smoothedCurve = FALSE,
   newd = seq(0, 1, 100),
   scale_factor = 1,
   returnFull = FALSE,
@@ -24,7 +25,8 @@ compute_effective_range_nochecks(
   X,
   inds,
   newd,
-  dgrid,
+  D,
+  smoothedCurve = FALSE,
   scale_factor = 1,
   returnFull = FALSE,
   cl = NULL,
@@ -39,6 +41,8 @@ compute_effective_range_nochecks(
 \item{df}{Degrees of freedom for which effective range should be computed.}
 
 \item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.}
+
+\item{smoothedCurve}{Should a smoothed curve be fit to the relationship between the distances and the smoothed weights (TRUE), or just find the smallest distance that has a negative weight (FALSE)}
 
 \item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.}
 
@@ -57,7 +61,7 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.}
 
-\item{dgrid}{Distance matrix.}
+\item{D}{Distance matrix.}
 }
 \description{
 Calculates the effective range for a spline basis matrix.
@@ -76,12 +80,8 @@ M <- 16
 tprs_df <- 10
 si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
-tprsSC <- mgcv::smoothCon(mgcv::s(x, y, fx=TRUE, k=tprs_df + 1), data= gridcoords)
-tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
-# Re-order the TPRS to put linear terms first
-tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
-colnames(tprsX) <- 1:ncol(tprsX)
-compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
+tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
+compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, span=0.15)
 }
 \seealso{
 \code{\link{compute_lowCurve}}

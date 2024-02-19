@@ -15,7 +15,7 @@ computeS(x, inds = 1:nrow(x))
 An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
 }
 \description{
-Calculates the smothing (or "hat") matrix from a design matrix.
+Calculates the smoothing (or "hat") matrix from a design matrix.
 }
 \details{
 Given a matrix \code{X} of spline values, this computes  \code{S=X(X'X)^(-1)X'}. When \code{x} has many rows, this can be quite large. The \code{inds} argument can be used to return a subset of columns from \code{S}.

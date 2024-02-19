@@ -2,16 +2,23 @@
 % Please edit documentation in R/functions_range.R
 \name{find_first_zero_cross}
 \alias{find_first_zero_cross}
-\title{Find first zero}
+\alias{find_zeros_cross}
+\title{Find first zeros}
 \usage{
 find_first_zero_cross(x)
+
+find_zeros_cross(D, S)
 }
 \arguments{
 \item{x}{Function values, assumed to be ordered}
+
+\item{D}{Distance matrix, or a subset of columns from a distance matrix.}
+
+\item{S}{Smoothing matrix, or a subset of columns from a smoothing matrix.}
 }
 \value{
 Index of first value of \code{x} that lies below 0. Decimal values will be returned using a simple interpolation of the two values straddling 0.
 }
 \description{
-Rudimentary root finding function to calculate first cross of y-axis
+For each column of smoothing matrix, determines smallest distance that corresponds with a negative smoothing weight
 }

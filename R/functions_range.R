@@ -7,6 +7,36 @@
 # compute_effective_range
 # compute_effective_range_nochecks
 
+
+#' @title Rearrange TPRS basis
+#' @description Rearrange the columns of the TPRS basis
+#' @param tprs TPRS basis
+#' @export
+arrangeTPRS <- function(tprs){
+    tprs <- tprs[, c(ncol(tprs)+-1:0, 1:(ncol(tprs)-2))]
+    colnames(tprs) <- 1:ncol(tprs)
+    tprs
+}
+
+#' @title Create TPRS basis
+#' @description Compute TPRS basis for given spatial coordinates
+#' @param coords Matrix of spatial coordinates. Data frame is coerced to matrix
+#' @param maxdf Largest number of splines to include in TPRS basis
+#' @importFrom mgcv smoothCon s PredictMat
+#' @seealso \code{\link{arrangeTPRS}}
+#' @export
+
+computeTPRS <- function(coords, maxdf){
+    x1 = x2 = NULL
+    max_tprsdf <- min(ceiling(0.75*nrow(coords)), (maxdf + 10))
+    colnames(coords) <- c('x1', 'x2')
+    tprsSC <- mgcv::smoothCon(mgcv::s(x1, x2, fx=T, k=max_tprsdf+1), data=coords)
+    tprsX <- mgcv::PredictMat(tprsSC[[1]], data=coords)
+    tprsX <- arrangeTPRS(tprsX)
+    return(list(tprsX = tprsX, df = max_tprsdf))
+}
+
+
 #' @title Compute Smoothing Matrix
 #' @description Calculates the smoothing (or "hat") matrix from a design matrix.
 #' @param x Matrix of spline values, assumed to have full rank. A data frame is coerced into a matrix.
@@ -187,12 +217,8 @@ find_zeros_cross <- function(D, S){
 #' tprs_df <- 10
 #' si <- seq(0, 1, length=M+1)[-(M+1)]
 #' gridcoords <- expand.grid(x=si, y=si)
-#' tprsSC <- mgcv::smoothCon(mgcv::s(x, y, fx=TRUE, k=tprs_df + 1), data= gridcoords)
-#' tprsX <- mgcv::PredictMat(tprsSC[[1]], data= gridcoords)
-#' # Re-order the TPRS to put linear terms first
-#' tprsX <- tprsX[, c(ncol(tprsX) + -1:0, 1:(ncol(tprsX)-2))]
-#' colnames(tprsX) <- 1:ncol(tprsX)
-#' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, span=0.15)
+#' tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
+#' compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, span=0.15)
 compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
