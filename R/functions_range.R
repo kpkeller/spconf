@@ -242,6 +242,7 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
 #' @rdname compute_effective_range
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
 #' @param D Distance matrix.
+#' @importFrom stats median
 #' @export
 compute_effective_range_nochecks <- function(X, inds, newd, D, smoothedCurve = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
     S <- computeS(X, inds=inds)
@@ -250,7 +251,7 @@ compute_effective_range_nochecks <- function(X, inds, newd, D, smoothedCurve = F
         out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
     }else{
         zeros <-  find_zeros_cross(D = D, S = S)
-        out <- median(zeros, na.rm =T)
+        out <- stats::median(zeros, na.rm =T)
     }
     if (returnFull){
         out <- list(range=out,
