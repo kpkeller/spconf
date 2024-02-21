@@ -8,34 +8,6 @@
 # compute_effective_range_nochecks
 
 
-#' @title Rearrange TPRS basis
-#' @description Rearrange the columns of the TPRS basis
-#' @param tprs TPRS basis
-#' @export
-arrangeTPRS <- function(tprs){
-    tprs <- tprs[, c(ncol(tprs)+-1:0, 1:(ncol(tprs)-2))]
-    colnames(tprs) <- 1:ncol(tprs)
-    tprs
-}
-
-#' @title Create TPRS basis
-#' @description Compute TPRS basis for given spatial coordinates
-#' @param coords Matrix of spatial coordinates. Data frame is coerced to matrix
-#' @param maxdf Largest number of splines to include in TPRS basis
-#' @importFrom mgcv smoothCon s PredictMat
-#' @seealso \code{\link{arrangeTPRS}}
-#' @export
-
-computeTPRS <- function(coords, maxdf){
-    x1 = x2 = NULL
-    max_tprsdf <- min(ceiling(0.75*nrow(coords)), (maxdf + 10))
-    colnames(coords) <- c('x1', 'x2')
-    tprsSC <- mgcv::smoothCon(mgcv::s(x1, x2, fx=T, k=max_tprsdf+1), data=coords)
-    tprsX <- mgcv::PredictMat(tprsSC[[1]], data=coords)
-    tprsX <- arrangeTPRS(tprsX)
-    return(list(tprsX = tprsX, df = max_tprsdf))
-}
-
 
 #' @title Compute Smoothing Matrix
 #' @description Calculates the smoothing (or "hat") matrix from a design matrix.
