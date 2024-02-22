@@ -4,12 +4,16 @@
 \alias{computeTPRS}
 \title{Create TPRS basis}
 \usage{
-computeTPRS(coords, maxdf, rearrange = TRUE)
+computeTPRS(coords, maxdf, rearrange = TRUE, intercept = FALSE)
 }
 \arguments{
 \item{coords}{Data frame containing the coordinates.}
 
 \item{maxdf}{Largest number of splines to include in TPRS basis}
+
+\item{rearrange}{Logical indicator of whether to rearrange the columns of TPRS basis}
+
+\item{intercept}{Logical indicator of whether or not to remove the intercept column}
 }
 \description{
 Compute TPRS basis for given spatial coordinates

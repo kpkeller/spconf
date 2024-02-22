@@ -25,6 +25,8 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
 #' @description Compute TPRS basis for given spatial coordinates
 #' @param coords Data frame containing the coordinates.
 #' @param maxdf Largest number of splines to include in TPRS basis
+#' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis
+#' @param intercept Logical indicator of whether or not to remove the intercept column
 #' @importFrom mgcv smoothCon s PredictMat
 #' @seealso \code{\link{arrangeTPRS}}
 #' @export
@@ -32,14 +34,14 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
 #' x <- runif(100)
 #' y <- runif(100)
 #' mat <- computeTPRS(data.frame(x, y), maxdf=4)
-computeTPRS <- function(coords, maxdf, rearrange=TRUE){
+computeTPRS <- function(coords, maxdf, rearrange=TRUE, intercept = FALSE){
     x1 = x2 = NULL
-    max_tprsdf <- min(ceiling(0.75*nrow(coords)), (maxdf + 10))
+    max_tprsdf <- min(ceiling(0.75*nrow(coords)), maxdf)
     colnames(coords) <- c('x1', 'x2')
     tprsSC <- mgcv::smoothCon(mgcv::s(x1, x2, fx=T, k=max_tprsdf+1), data=coords)
     tprsX <- mgcv::PredictMat(tprsSC[[1]], data=coords)
     if (rearrange){
-        tprsX <- arrangeTPRS(tprsX)
+        tprsX <- arrangeTPRS(tprs = tprsX, intercept = intercept)
     }
     return(list(tprsX = tprsX, df = max_tprsdf))
 }
