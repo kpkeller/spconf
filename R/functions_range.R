@@ -174,7 +174,9 @@ find_zeros_cross <- function(D, S){
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
 #' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.
-#' @details The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
+#' @details Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
+#' For each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained and the median of the obtained distances is reported as the effective bandwidth.
+#' The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 #' @seealso \code{\link{compute_lowCurve}}
 #' @export
 #' @importFrom flexclust dist2

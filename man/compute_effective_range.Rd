@@ -67,6 +67,8 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 Calculates the effective range for a spline basis matrix.
 }
 \details{
+Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
+For each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained and the median of the obtained distances is reported as the effective bandwidth.
 The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 }
 \examples{

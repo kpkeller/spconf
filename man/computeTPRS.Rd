@@ -18,6 +18,9 @@ computeTPRS(coords, maxdf, rearrange = TRUE, intercept = FALSE)
 \description{
 Compute TPRS basis for given spatial coordinates
 }
+\details{
+This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+}
 \examples{
 x <- runif(100)
 y <- runif(100)

@@ -27,6 +27,7 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
 #' @param maxdf Largest number of splines to include in TPRS basis
 #' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis
 #' @param intercept Logical indicator of whether or not to remove the intercept column
+#' @details This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 #' @importFrom mgcv smoothCon s PredictMat
 #' @seealso \code{\link{arrangeTPRS}}
 #' @export
