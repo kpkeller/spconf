@@ -35,6 +35,7 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
 #' x <- runif(100)
 #' y <- runif(100)
 #' mat <- computeTPRS(data.frame(x, y), maxdf=4)
+
 computeTPRS <- function(coords, maxdf, rearrange=TRUE, intercept = FALSE){
     x1 = x2 = NULL
     max_tprsdf <- min(ceiling(0.75*nrow(coords)), maxdf)
@@ -44,5 +45,6 @@ computeTPRS <- function(coords, maxdf, rearrange=TRUE, intercept = FALSE){
     if (rearrange){
         tprsX <- arrangeTPRS(tprs = tprsX, intercept = intercept)
     }
+    colnames(tprsX) <- paste0("tprs", 1:max_tprsdf)
     return(list(tprsX = tprsX, df = max_tprsdf))
 }

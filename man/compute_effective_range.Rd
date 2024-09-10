@@ -15,7 +15,7 @@ compute_effective_range(
   scale_factor = 1,
   returnFull = FALSE,
   cl = NULL,
-  namestem = "",
+  namestem = "tprs",
   inds = NULL,
   verbose = TRUE,
   span = 0.1

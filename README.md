@@ -36,12 +36,13 @@ xloc <- runif(n=100, min=0, max=10)
 X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 colnames(X) <- paste0("s", 1:ncol(X))
 xplot <- 0:10
-compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, smoothedCurve = TRUE, newd=xplot, namestem="s")
+compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, 
+                        smoothedCurve = TRUE, newd=xplot, namestem="s")
 #> Df =  2 
 #> Df =  3 
 #> Df =  4
 #>        2        3        4 
-#> 4.647335 4.589246 4.102582
+#> 4.397386 4.230755 3.972437
 ```
 
 ``` r
@@ -51,7 +52,8 @@ tprs_df <- 10
 si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
 tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, smoothedCurve = FALSE, namestem="tprs")
+compute_effective_range(X=tprsX$tprsX, coords=gridcoords, namestem = "tprs",
+                        df=3:10, smoothedCurve = FALSE)
 #> Df =  3 
 #> Df =  4 
 #> Df =  5 
