@@ -2,6 +2,7 @@
 % Please edit documentation in R/spconf.R
 \docType{package}
 \name{spconf-package}
+\alias{spconf}
 \alias{spconf-package}
 \title{Computing Scales of Spatial Smoothing for Confounding Adjustment}
 \description{
@@ -12,4 +13,13 @@ for unmeasured spatial confounding in regression models, but the
 calculation of effective range can be applied to smoothing
 matrices in other contexts. For algorithmic details see
 <https://doi.org/10.1111/rssa.12556>
+}
+\author{
+\strong{Maintainer}: Kayleigh Keller \email{kayleigh.keller@colostate.edu}
+
+Authors:
+\itemize{
+  \item Maddie Rainey \email{maddie.rainey@colostate.edu}
+}
+
 }
