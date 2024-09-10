@@ -185,7 +185,8 @@ find_zeros_cross <- function(D, S){
 #' X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 #' colnames(X) <- paste0("s", 1:ncol(X))
 #' xplot <- 0:10
-#' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
+#' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
+#'                         namestem="s", smoothedCurve = TRUE)
 #'
 #' M <- 16
 #' tprs_df <- 10
@@ -193,7 +194,7 @@ find_zeros_cross <- function(D, S){
 #' gridcoords <- expand.grid(x=si, y=si)
 #' tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
 #' compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10)
-compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="", inds=NULL,verbose=TRUE, span=0.1){
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)

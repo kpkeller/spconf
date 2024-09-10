@@ -15,7 +15,7 @@ compute_effective_range(
   scale_factor = 1,
   returnFull = FALSE,
   cl = NULL,
-  namestem = "",
+  namestem = "tprs",
   inds = NULL,
   verbose = TRUE,
   span = 0.1
@@ -76,7 +76,8 @@ xloc <- runif(n=100, min=0, max=10)
 X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 colnames(X) <- paste0("s", 1:ncol(X))
 xplot <- 0:10
-compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot, namestem="s")
+compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
+                        namestem="s", smoothedCurve = TRUE)
 
 M <- 16
 tprs_df <- 10
