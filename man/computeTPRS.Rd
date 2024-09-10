@@ -11,7 +11,7 @@ computeTPRS(coords, maxdf, rearrange = TRUE, intercept = FALSE)
 
 \item{maxdf}{Largest number of splines to include in TPRS basis}
 
-\item{rearrange}{Logical indicator of whether to rearrange the columns of TPRS basis}
+\item{rearrange}{Logical indicator of whether to rearrange the columns of TPRS basis. The default from \code{mgcv} puts the linear terms at the end; re-arranging moves them to the first columns of the matrix.}
 
 \item{intercept}{Logical indicator of whether or not to remove the intercept column}
 }

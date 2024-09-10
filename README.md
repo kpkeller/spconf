@@ -42,7 +42,7 @@ compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4,
 #> Df =  3 
 #> Df =  4
 #>        2        3        4 
-#> 4.397386 4.230755 3.972437
+#> 4.475190 4.390494 4.179000
 ```
 
 ``` r
