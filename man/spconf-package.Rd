@@ -6,13 +6,7 @@
 \alias{spconf-package}
 \title{Computing Scales of Spatial Smoothing for Confounding Adjustment}
 \description{
-Computes the effective range of a smoothing matrix,
-which is measure of the distance to which smoothing occurs.
-This is motivated by the application of spatial splines for adjusting
-for unmeasured spatial confounding in regression models, but the
-calculation of effective range can be applied to smoothing
-matrices in other contexts. For algorithmic details see
-<https://doi.org/10.1111/rssa.12556>
+Computes the effective range of a smoothing matrix, which is measure of the distance to which smoothing occurs. This is motivated by the application of spatial splines for adjusting for unmeasured spatial confounding in regression models, but the calculation of effective range can be applied to smoothing matrices in other contexts. For algorithmic details, see Rainey and Keller (2024) \url{https://doi.org/10.1371/journal.pone.0311440} and Keller and Szpiro (2020) "Selecting a Scale for Spatial Confounding Adjustment" \url{https://doi.org/10.1111/rssa.12556}.
 }
 \author{
 \strong{Maintainer}: Kayleigh Keller \email{kayleigh.keller@colostate.edu}
@@ -23,3 +17,4 @@ Authors:
 }
 
 }
+\keyword{internal}
