@@ -7,10 +7,10 @@ R Package for Computing Scales of Spatial Smoothing for Confounding
 Adjustment
 
 This package is designed to calculate the *effective bandwidth* of a
-spatial smoothing matrix, following two different procedures, one
-described by Keller and Szpiro (2020). This package also contains a
-wrapper function to create a thin-plate regression spline basis using
-the mgcv package (Wood, 2011).
+spatial smoothing matrix, following two different procedures, described
+by Keller and Szpiro (2020) and Rainey and Keller (2024). This package
+also contains a wrapper function to create a thin-plate regression
+spline basis using the mgcv package (Wood, 2011).
 
 ## Installation
 
@@ -25,11 +25,11 @@ a matrix of spline values `X`, with the assumption that the splines are
 nested to that adding additional columns increases the flexibility of
 forms that can be fit. For each choice of degrees of freedom, the
 function computes the effective range of the smoothing matrix. Using
-`smoothedCurve = TRUE`, the effective range is determined by the
-procedure described by Keller and Szpiro (2020) and require the `span`
+`smoothedCurve = TRUE`, the effective range is computed using the
+procedure introduced by Keller and Szpiro (2020) and requires the `span`
 input; and using `smoothedCurve = FALSE`, the effective range is
-determined by finding smallest distance that has a negative weight and
-no longer requires the `span` input.
+computed using the procedure introduced by Rainey and Keller (2024)
+which no longer requires the `span` input.
 
 ``` r
 xloc <- runif(n=100, min=0, max=10)
@@ -42,7 +42,7 @@ compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4,
 #> Df =  3 
 #> Df =  4
 #>        2        3        4 
-#> 4.475190 4.390494 4.179000
+#> 4.343599 4.276254 4.193159
 ```
 
 ``` r
@@ -71,6 +71,10 @@ compute_effective_range(X=tprsX$tprsX, coords=gridcoords, namestem = "tprs",
 Keller and Szpiro (2020). Selecting a scale for spatial confounding
 adjustment. *Journal of the Royal Statistical Society, Series A*
 <https://doi.org/10.1111/rssa.12556>.
+
+Rainey and Keller (2024). spconfShiny: An R Shiny application for
+calculating the spatial scale of smoothing splines for point data. *PLOS
+ONE* <https://doi.org/10.1371/journal.pone.0311440>
 
 Wood (2011). Fast Stable Restricted Maximum Likelihood and Marginal
 Likelihood Estimation of Semiparametric Generalized Linear Models.

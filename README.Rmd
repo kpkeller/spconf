@@ -18,7 +18,7 @@ library(spconf)
 
 R Package for Computing Scales of Spatial Smoothing for Confounding Adjustment
 
-This package is designed to calculate the *effective bandwidth* of a spatial smoothing matrix, following two different procedures, one described by Keller and Szpiro (2020). This package also contains a wrapper function to create a thin-plate regression spline basis using the mgcv package (Wood, 2011).
+This package is designed to calculate the *effective bandwidth* of a spatial smoothing matrix, following two different procedures, described by Keller and Szpiro (2020) and Rainey and Keller (2024). This package also contains a wrapper function to create a thin-plate regression spline basis using the mgcv package (Wood, 2011).
 
 
 ## Installation
@@ -30,7 +30,7 @@ devtools::install_github("kpkeller/spconf")
 
 ## Computing Effective Range
 
-The primary function is `compute_effective_range()`. The function takes a matrix of spline values `X`, with the assumption that the splines are nested to that adding additional columns increases the flexibility of forms that can be fit.  For each choice of degrees of freedom, the function computes the effective range of the smoothing matrix. Using `smoothedCurve = TRUE`, the effective range is determined by the procedure described by Keller and Szpiro (2020) and require the `span` input; and using `smoothedCurve = FALSE`, the effective range is determined by finding smallest distance that has a negative weight and no longer requires the `span` input.
+The primary function is `compute_effective_range()`. The function takes a matrix of spline values `X`, with the assumption that the splines are nested to that adding additional columns increases the flexibility of forms that can be fit.  For each choice of degrees of freedom, the function computes the effective range of the smoothing matrix. Using `smoothedCurve = TRUE`, the effective range is computed using the procedure introduced by Keller and Szpiro (2020) and requires the `span` input; and using `smoothedCurve = FALSE`, the effective range is computed using the procedure introduced by Rainey and Keller (2024) which no longer requires the `span` input.
 
 
 ```{r}
@@ -55,7 +55,13 @@ compute_effective_range(X=tprsX$tprsX, coords=gridcoords, namestem = "tprs",
 
 Keller and Szpiro (2020). Selecting a scale for spatial confounding adjustment. *Journal of the Royal Statistical Society, Series A*  https://doi.org/10.1111/rssa.12556. 
 
+Rainey and Keller (2024). spconfShiny: An R Shiny application for calculating the spatial scale of smoothing splines for point data. *PLOS ONE* https://doi.org/10.1371/journal.pone.0311440
+
 Wood (2011). Fast Stable Restricted Maximum Likelihood and Marginal Likelihood Estimation of Semiparametric Generalized Linear Models. *Journal of the Royal Statistical Society Series B: Statistical Methodology* https://doi.org/10.1111/j.1467-9868.2010.00749.x
+
+
+
+
 
 
 
