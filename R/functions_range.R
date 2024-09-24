@@ -166,8 +166,8 @@ find_zeros_cross <- function(D, S){
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.
 #' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.
-#' @param smoothedCurve Should a smoothed curve be fit to the relationship between the distances and the smoothed weights (TRUE), or just find the smallest distance that has a negative weight (FALSE)
-#' @param returnFull Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).
+#' @param smoothedCurve Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.
+#' @param returnFull Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines.
 #' Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...
@@ -175,9 +175,13 @@ find_zeros_cross <- function(D, S){
 #' @param verbose Control message printing.
 #' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.
 #' @details Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
-#' For each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained and the median of the obtained distances is reported as the effective bandwidth.
-#' The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
+#' Setting \code{smoothedCurve = TRUE} (see Keller and Szpiro, 2020, for details), for each column of smoothing weights, a LOESS curve is fit to the smoothing weights as a function of the distances, and the distance where the curve first crosses zero is obtained.
+#' Setting \code{smoothedCurve = FALSE} (see Rainey and Keller, 2024, for details), for each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained.
+#' Then, for both procedures, the median of the obtained distances is reported as the effective bandwidth.
+#' @details The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 #' @seealso \code{\link{compute_lowCurve}}
+#' @references Keller and Szpiro (2020). Selecting a scale for spatial confounding adjustment. Journal of the Royal Statistical Society, Series A  https://doi.org/10.1111/rssa.12556.
+#' @references Rainey and Keller (2024). spconfShiny: An R Shiny application for calculating the spatial scale of smoothing splines for point data. PLOS ONE https://doi.org/10.1371/journal.pone.0311440
 #' @export
 #' @importFrom flexclust dist2
 #' @examples

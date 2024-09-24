@@ -42,13 +42,13 @@ compute_effective_range_nochecks(
 
 \item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.}
 
-\item{smoothedCurve}{Should a smoothed curve be fit to the relationship between the distances and the smoothed weights (TRUE), or just find the smallest distance that has a negative weight (FALSE)}
+\item{smoothedCurve}{Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.}
 
 \item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.}
 
 \item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.}
 
-\item{returnFull}{Should the mean and median curves be returned (TRUE), or just the range value of where they first cross zero (FALSE).}
+\item{returnFull}{Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).}
 
 \item{cl}{Cluster object, or number of cluster instances to create. Defaults to no parallelization.}
 
@@ -68,7 +68,10 @@ Calculates the effective range for a spline basis matrix.
 }
 \details{
 Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
-For each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained and the median of the obtained distances is reported as the effective bandwidth.
+Setting \code{smoothedCurve = TRUE} (see Keller and Szpiro, 2020, for details), for each column of smoothing weights, a LOESS curve is fit to the smoothing weights as a function of the distances, and the distance where the curve first crosses zero is obtained.
+Setting \code{smoothedCurve = FALSE} (see Rainey and Keller, 2024, for details), for each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained.
+Then, for both procedures, the median of the obtained distances is reported as the effective bandwidth.
+
 The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 }
 \examples{
@@ -85,6 +88,11 @@ si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
 tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
 compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10)
+}
+\references{
+Keller and Szpiro (2020). Selecting a scale for spatial confounding adjustment. Journal of the Royal Statistical Society, Series A  https://doi.org/10.1111/rssa.12556.
+
+Rainey and Keller (2024). spconfShiny: An R Shiny application for calculating the spatial scale of smoothing splines for point data. PLOS ONE https://doi.org/10.1371/journal.pone.0311440
 }
 \seealso{
 \code{\link{compute_lowCurve}}
