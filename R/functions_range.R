@@ -164,8 +164,8 @@ find_zeros_cross <- function(D, S){
 #' @param coords Matrix of point coordinates. Defaults to the \code{x} and \code{y} columns of \code{X}, but can have a different number of columns for settings with different dimensions.
 #' @param df Degrees of freedom for which effective range should be computed.
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
-#' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.
-#' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.
+#' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
+#' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \coords{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
 #' @param smoothedCurve Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.
 #' @param returnFull Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
@@ -173,8 +173,8 @@ find_zeros_cross <- function(D, S){
 #' Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
 #' @param verbose Control message printing.
-#' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.
-#' @details Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
+#' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates. Only needed when \code{smoothedCurve} is \code{TRUE}.
+#' @details Using the given spline basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
 #' Setting \code{smoothedCurve = TRUE} (see Keller and Szpiro, 2020, for details), for each column of smoothing weights, a LOESS curve is fit to the smoothing weights as a function of the distances, and the distance where the curve first crosses zero is obtained.
 #' Setting \code{smoothedCurve = FALSE} (see Rainey and Keller, 2024, for details), for each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained.
 #' Then, for both procedures, the median of the obtained distances is reported as the effective bandwidth.
@@ -185,6 +185,14 @@ find_zeros_cross <- function(D, S){
 #' @export
 #' @importFrom flexclust dist2
 #' @examples
+#' M <- 16
+#' tprs_df <- 10
+#' si <- seq(0, 1, length=M+1)[-(M+1)]
+#' gridcoords <- expand.grid(x=si, y=si)
+#' tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
+#' compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
+#'
+#'
 #' xloc <- runif(n=100, min=0, max=10)
 #' X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 #' colnames(X) <- paste0("s", 1:ncol(X))
@@ -192,12 +200,6 @@ find_zeros_cross <- function(D, S){
 #' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
 #'                         namestem="s", smoothedCurve = TRUE)
 #'
-#' M <- 16
-#' tprs_df <- 10
-#' si <- seq(0, 1, length=M+1)[-(M+1)]
-#' gridcoords <- expand.grid(x=si, y=si)
-#' tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-#' compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10)
 compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=TRUE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
@@ -230,7 +232,7 @@ compute_effective_range_nochecks <- function(X, inds, newd, D, smoothedCurve = F
         out <-  find_first_zero_cross(x = SCurve$SCurveMedian)*scale_factor
     }else{
         zeros <-  find_zeros_cross(D = D, S = S)
-        out <- stats::median(zeros, na.rm =T)
+        out <- stats::median(zeros, na.rm =T)*scale_factor
     }
     if (returnFull){
         out <- list(range=out,

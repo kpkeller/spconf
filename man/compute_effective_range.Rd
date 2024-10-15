@@ -44,9 +44,9 @@ compute_effective_range_nochecks(
 
 \item{smoothedCurve}{Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.}
 
-\item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}.}
+\item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
-\item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid.}
+\item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \coords{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
 \item{returnFull}{Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).}
 
@@ -59,7 +59,7 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{verbose}{Control message printing.}
 
-\item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates.}
+\item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
 \item{D}{Distance matrix.}
 }
@@ -75,6 +75,14 @@ Then, for both procedures, the median of the obtained distances is reported as t
 The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
 }
 \examples{
+M <- 16
+tprs_df <- 10
+si <- seq(0, 1, length=M+1)[-(M+1)]
+gridcoords <- expand.grid(x=si, y=si)
+tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
+compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
+
+
 xloc <- runif(n=100, min=0, max=10)
 X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 colnames(X) <- paste0("s", 1:ncol(X))
@@ -82,12 +90,6 @@ xplot <- 0:10
 compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
                         namestem="s", smoothedCurve = TRUE)
 
-M <- 16
-tprs_df <- 10
-si <- seq(0, 1, length=M+1)[-(M+1)]
-gridcoords <- expand.grid(x=si, y=si)
-tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10)
 }
 \references{
 Keller and Szpiro (2020). Selecting a scale for spatial confounding adjustment. Journal of the Royal Statistical Society, Series A  https://doi.org/10.1111/rssa.12556.
