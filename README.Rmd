@@ -24,8 +24,9 @@ This package is designed to calculate the *effective bandwidth* of a spatial smo
 ## Installation
 
 The `spconf` package can be installed by running
+
 ```
-devtools::install_github("kpkeller/spconf")
+remotes::install_github("kpkeller/spconf")
 ```
 
 ## Computing Effective Range
