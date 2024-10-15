@@ -16,7 +16,7 @@ spline basis using the mgcv package (Wood, 2011).
 
 The `spconf` package can be installed by running
 
-    devtools::install_github("kpkeller/spconf")
+    remotes::install_github("kpkeller/spconf")
 
 ## Computing Effective Range
 
@@ -42,7 +42,7 @@ compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4,
 #> Df =  3 
 #> Df =  4
 #>        2        3        4 
-#> 4.343599 4.276254 4.193159
+#> 4.585301 4.344339 4.053536
 ```
 
 ``` r
