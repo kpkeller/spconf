@@ -46,7 +46,7 @@ compute_effective_range_nochecks(
 
 \item{newd}{Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
-\item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \coords{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.}
+\item{scale_factor}{Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
 \item{returnFull}{Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).}
 
@@ -67,7 +67,7 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 Calculates the effective range for a spline basis matrix.
 }
 \details{
-Using the given TPRS basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
+Using the given spline basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.
 Setting \code{smoothedCurve = TRUE} (see Keller and Szpiro, 2020, for details), for each column of smoothing weights, a LOESS curve is fit to the smoothing weights as a function of the distances, and the distance where the curve first crosses zero is obtained.
 Setting \code{smoothedCurve = FALSE} (see Rainey and Keller, 2024, for details), for each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained.
 Then, for both procedures, the median of the obtained distances is reported as the effective bandwidth.

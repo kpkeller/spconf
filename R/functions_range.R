@@ -165,7 +165,7 @@ find_zeros_cross <- function(D, S){
 #' @param df Degrees of freedom for which effective range should be computed.
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
 #' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
-#' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \coords{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
+#' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
 #' @param smoothedCurve Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.
 #' @param returnFull Should the mean and median curves be returned (\code{TRUE}), or just the range value of where they first cross zero (\code{FALSE}).
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
