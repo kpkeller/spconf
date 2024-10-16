@@ -17,7 +17,7 @@ compute_effective_range(
   cl = NULL,
   namestem = "tprs",
   inds = NULL,
-  verbose = TRUE,
+  verbose = FALSE,
   span = 0.1
 )
 

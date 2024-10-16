@@ -203,7 +203,7 @@ find_zeros_cross <- function(D, S){
 #' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
 #'                         namestem="s", smoothedCurve = TRUE)
 #'
-compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=TRUE, span=0.1){
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=FALSE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
@@ -217,7 +217,9 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
     names(out) <- df
     if(!all(paste0(namestem, 1:max(df)) %in% colnames(X))) stop(paste0("Column names of X must take the form ", namestem, max(df)))
     for (k in seq_along(df)){
-        cat("Df = ", df[k], "\n")
+        if(verbose){
+            cat("Df = ", df[k], "\n")
+        }
         out[[k]] <- compute_effective_range_nochecks(X=X[, paste0(namestem, 1:df[k]), drop=FALSE], inds=inds, smoothedCurve = smoothedCurve, newd=newd, D=D, scale_factor=scale_factor, returnFull=returnFull, cl=cl, span=span)
     }
     out
