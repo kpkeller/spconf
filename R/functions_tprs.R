@@ -7,6 +7,7 @@
 #' @description Rearrange the columns of the TPRS basis
 #' @param tprs Matrix of TPRS basis values
 #' @param intercept Logical indicator of whether or not to remove the intercept column
+#' @return If \code{intercept = TRUE}, a matrix with same dimensions at \code{tprs}. If \code{intercept = FALSE}, a matrix with one fewer columns than \code{tprs}
 #' @details This function takes TPRS basis values, as created by the \code{mgcv} package, and rearranges them. The last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 #' @seealso \code{\link{computeTPRS}}
 #' @export
@@ -27,7 +28,8 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
 #' @param maxdf Largest number of splines to include in TPRS basis
 #' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis. The default from \code{mgcv} puts the linear terms at the end; re-arranging moves them to the first columns of the matrix.
 #' @param intercept Logical indicator of whether or not to remove the intercept column
-#' @details This function creates a thin-plate regression spline (TPRS) basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+#' @return List with two element: An \eqn{n}-by-\eqn{N} matrix where \eqn{n} is the number of row in \code{coords} and \eqn{N} is equal to \code{maxdf}; an integer
+#' @details This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 #' @importFrom mgcv smoothCon s PredictMat
 #' @seealso \code{\link{arrangeTPRS}}
 #' @export

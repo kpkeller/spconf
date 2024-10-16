@@ -15,11 +15,14 @@ computeTPRS(coords, maxdf, rearrange = TRUE, intercept = FALSE)
 
 \item{intercept}{Logical indicator of whether or not to remove the intercept column}
 }
+\value{
+List with two element: An \eqn{n}-by-\eqn{N} matrix where \eqn{n} is the number of row in \code{coords} and \eqn{N} is equal to \code{maxdf}; an integer
+}
 \description{
 Compute TPRS basis for given spatial coordinates
 }
 \details{
-This function creates a thin-plate regression spline (TPRS) basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 }
 \examples{
 x <- runif(100)

@@ -63,6 +63,9 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{D}{Distance matrix.}
 }
+\value{
+If \code{returnFull = TRUE}, list with number of elements equal to the length of \code{df}. If \code{returnFull = FALSE}, vector of the same length as \code{df}
+}
 \description{
 Calculates the effective range for a spline basis matrix.
 }

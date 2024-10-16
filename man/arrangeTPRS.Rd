@@ -11,6 +11,9 @@ arrangeTPRS(tprs, intercept = FALSE)
 
 \item{intercept}{Logical indicator of whether or not to remove the intercept column}
 }
+\value{
+If \code{intercept = TRUE}, a matrix with same dimensions at \code{tprs}. If \code{intercept = FALSE}, a matrix with one fewer columns than \code{tprs}
+}
 \description{
 Rearrange the columns of the TPRS basis
 }
