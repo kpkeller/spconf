@@ -30,3 +30,6 @@ X <- splines::ns(x=xloc, df=4, intercept=TRUE)
 S <- computeS(X)
 S2 <- computeS(X, inds=1:4)
 }
+\seealso{
+\code{\link{compute_effective_range()}}
+}

@@ -61,10 +61,10 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 
-\item{D}{Distance matrix.}
+\item{D}{Distance matrix for coordinates.}
 }
 \value{
-The effective bandwidth for each value of \code{df}. If \code{returnFull = FALSE}, then this is a vector of the same length as \code{df}. If \code{returnFull = TRUE}, this is a list that additionally contains the zeros ()
+The effective bandwidth for each value of \code{df}. If \code{returnFull = FALSE}, then this is a vector of the same length as \code{df}. If \code{returnFull = TRUE} and \code{smoothedCurve = TRUE}, this is a list that additionally contains values of the pointwise median and mean of the smoothed curves.
 }
 \description{
 Calculates the effective range for a spline basis matrix.
@@ -75,7 +75,7 @@ Setting \code{smoothedCurve = TRUE} (see Keller and Szpiro, 2020, for details), 
 Setting \code{smoothedCurve = FALSE} (see Rainey and Keller, 2024, for details), for each column of smoothing weights, the smallest distance that corresponds with the first negative smoothing weight is obtained.
 Then, for both procedures, the median of the obtained distances is reported as the effective bandwidth.
 
-The names of columns of \code{X} are assumed to be numeric, with an optional name stem (e.g. "s1", "s2", etc.).
+The columns of \code{X} are selected by name, and so are assumed to have a numeric value in the column name that indicates the spline number. For example, the columns containing the first three splines should be "1", "2", and "3". IF there is a fixed character prefix, that can be supplied via \code{namestem}. For example, if the columns are "s1", "s2", "s3", then set \code{namestem="s"}.
 }
 \examples{
 M <- 16

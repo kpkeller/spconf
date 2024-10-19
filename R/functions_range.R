@@ -17,6 +17,7 @@
 #'
 #' @return  An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
 #' @export
+#' @seealso \code{\link{compute_effective_range()}}
 #' @examples
 #' # Simple design matrix case
 #' X <- cbind(1, rep(c(0, 1), each=4))
@@ -117,10 +118,13 @@ compute_lowCurve <- function(S, D, newd, cl=NULL, span=0.1){
 
 # Function for getting zero via linear interpolation between
 # the two points straddling zero.
-#' @rdname find_zeros_cross
+#' @title Find zero
+#' @description
+#' Calculates the zero of a function by linear interpolation between the first two points either side of zero.
 #' @param x Function values, assumed to be ordered
 #' @return Index of first value of \code{x} that lies below 0. Decimal values will be returned using a simple interpolation of the two values straddling 0.
 #' @export
+#' @seealso \code{\link{find_zeros_cross}}, \code{\link{compute_effective_range}}
 find_first_zero_cross <- function(x){
     upper_ind <- min(which(x<0))
     lower_ind <- upper_ind- 1
@@ -130,11 +134,12 @@ find_first_zero_cross <- function(x){
 
 # Function for finding the smallest distance that has a
 # negative smoothing weight for each column of the smoothing matrix
-#' @title Find first zeros
-#' @description For each column of smoothing matrix, determines smallest distance that corresponds with a negative smoothing weight
+#' @title Find distance to first zero
+#' @description For a set of distance and smoothing matrix values, determines the smallest distance that corresponds with negative value for each column of the smoothing matrix.
 #' @param D Distance matrix, or a subset of columns from a distance matrix.
 #' @param S Smoothing matrix, or a subset of columns from a smoothing matrix.
 #' @export
+#' @return Vector of length equal to the number of columns in \code{D} and \code{S}. Each value is the smallest observed distance (from a column of \code{D}) that has a negative value in the corresponding column of \code{S}.
 find_zeros_cross <- function(D, S){
     if (nrow(S)!=nrow(D)) stop("Rows in S must correspond to rows in D.")
     if (ncol(S)!=ncol(D)) stop("Columns in S must correspond to columns in D.")
@@ -227,7 +232,7 @@ compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(
 
 #' @rdname compute_effective_range
 #' @param inds Indices of observations to use for computation. Passed to \code{\link{computeS}}.
-#' @param D Distance matrix.
+#' @param D Distance matrix for coordinates.
 #' @importFrom stats median
 #' @export
 compute_effective_range_nochecks <- function(X, inds, newd, D, smoothedCurve = FALSE, scale_factor=1, returnFull=FALSE, cl=NULL, span=0.1){
