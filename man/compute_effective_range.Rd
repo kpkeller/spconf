@@ -83,7 +83,7 @@ tprs_df <- 10
 si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
 tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
+compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
 
 
 xloc <- runif(n=100, min=0, max=10)

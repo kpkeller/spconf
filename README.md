@@ -38,16 +38,8 @@ tprs_df <- 10
 si <- seq(0, 1, length=M+1)[-(M+1)]
 gridcoords <- expand.grid(x=si, y=si)
 tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-compute_effective_range(X=tprsX$tprsX, coords=gridcoords, namestem = "tprs",
+compute_effective_range(X=tprsX, coords=gridcoords, namestem = "tprs",
                         df=3:10, smoothedCurve = FALSE)
-#> Df =  3 
-#> Df =  4 
-#> Df =  5 
-#> Df =  6 
-#> Df =  7 
-#> Df =  8 
-#> Df =  9 
-#> Df =  10
 #>         3         4         5         6         7         8         9        10 
 #> 0.3801727 0.3365728 0.3125000 0.3125000 0.3125000 0.3125000 0.3125000 0.3186887
 ```
@@ -61,11 +53,8 @@ colnames(X) <- paste0("s", 1:ncol(X))
 xplot <- 0:10
 compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, 
                         smoothedCurve = TRUE, newd=xplot, namestem="s")
-#> Df =  2 
-#> Df =  3 
-#> Df =  4
 #>        2        3        4 
-#> 4.513722 4.398129 4.243837
+#> 4.512474 4.472711 4.215862
 ```
 
 ## References

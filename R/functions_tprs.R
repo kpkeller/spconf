@@ -3,13 +3,44 @@
 # arrangeTPRS
 # computeTPRS
 
-#' @title Rearrange TPRS basis
-#' @description Rearrange the columns of the TPRS basis
-#' @param tprs Matrix of TPRS basis values
-#' @param intercept Logical indicator of whether or not to remove the intercept column
-#' @return If \code{intercept = TRUE}, a matrix with same dimensions at \code{tprs}. If \code{intercept = FALSE}, a matrix with one fewer columns than \code{tprs}
-#' @details This function takes TPRS basis values, as created by the \code{mgcv} package, and rearranges them. The last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
-#' @seealso \code{\link{computeTPRS}}
+
+#' @title Create TPRS basis
+#' @description Compute TPRS basis for given spatial coordinates
+#' @param coords Data frame containing the coordinates.
+#' @param maxdf Largest number of splines to include in TPRS basis
+#' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis.
+#' @param intercept Logical indicator of whether or not to remove the intercept column from the basis when \code{rearrange} is \code{TRUE}.
+#' @return An \eqn{n}-by-\eqn{k} matrix where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
+#' @details \code{computeTPRS} creates a thin-plate regression spline (TPRS) basis from a two-dimensional set of coordinate locations using the \code{mgcv} package.
+#'
+#'  The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it function moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+#'
+#' @importFrom mgcv smoothCon s PredictMat
+#' @export
+#' @examples
+#' x <- runif(100)
+#' y <- runif(100)
+#' mat <- computeTPRS(data.frame(x, y), maxdf=4)
+computeTPRS <- function(coords, maxdf, rearrange=TRUE, intercept = FALSE){
+    x1 <- x2 <- NULL # to avoid warnings
+    colnames(coords) <- c('x1', 'x2')
+    tprsSC <- mgcv::smoothCon(mgcv::s(x1, x2, fx=T, k=maxdf+1), data=coords)
+    tprsX <- mgcv::PredictMat(tprsSC[[1]], data=coords)
+    if (rearrange){
+        tprsX <- arrangeTPRS(tprs = tprsX, intercept = intercept)
+    }
+
+    if (!intercept & rearrange){
+        colnames(tprsX) <- paste0("tprs", 1:maxdf)
+    } else {
+        colnames(tprsX) <- paste0("tprs", 1:(maxdf+1))
+    }
+    tprsX
+}
+
+
+#' @rdname computeTPRS
+#' @param tprs Matrix of TPRS basis values (from \code{computeTPRS}).
 #' @export
 arrangeTPRS <- function(tprs, intercept=FALSE){
     if (intercept){
@@ -22,31 +53,3 @@ arrangeTPRS <- function(tprs, intercept=FALSE){
     tprs
 }
 
-#' @title Create TPRS basis
-#' @description Compute TPRS basis for given spatial coordinates
-#' @param coords Data frame containing the coordinates.
-#' @param maxdf Largest number of splines to include in TPRS basis
-#' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis. The default from \code{mgcv} puts the linear terms at the end; re-arranging moves them to the first columns of the matrix.
-#' @param intercept Logical indicator of whether or not to remove the intercept column
-#' @return List with two element: An \eqn{n}-by-\eqn{N} matrix where \eqn{n} is the number of row in \code{coords} and \eqn{N} is equal to \code{maxdf}; an integer
-#' @details This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
-#' @importFrom mgcv smoothCon s PredictMat
-#' @seealso \code{\link{arrangeTPRS}}
-#' @export
-#' @examples
-#' x <- runif(100)
-#' y <- runif(100)
-#' mat <- computeTPRS(data.frame(x, y), maxdf=4)
-
-computeTPRS <- function(coords, maxdf, rearrange=TRUE, intercept = FALSE){
-    x1 = x2 = NULL
-    max_tprsdf <- min(ceiling(0.75*nrow(coords)), maxdf)
-    colnames(coords) <- c('x1', 'x2')
-    tprsSC <- mgcv::smoothCon(mgcv::s(x1, x2, fx=T, k=max_tprsdf+1), data=coords)
-    tprsX <- mgcv::PredictMat(tprsSC[[1]], data=coords)
-    if (rearrange){
-        tprsX <- arrangeTPRS(tprs = tprsX, intercept = intercept)
-    }
-    colnames(tprsX) <- paste0("tprs", 1:max_tprsdf)
-    return(list(tprsX = tprsX, df = max_tprsdf))
-}

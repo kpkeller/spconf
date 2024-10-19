@@ -17,7 +17,7 @@
 #'
 #' @return  An \eqn{N}-by-\eqn{n} matrix, where \eqn{n} is the length of \code{inds} and \eqn{N} is the number of rows in \code{x}.
 #' @export
-#' @seealso \code{\link{compute_effective_range()}}
+#' @seealso \code{\link{compute_effective_range}}
 #' @examples
 #' # Simple design matrix case
 #' X <- cbind(1, rep(c(0, 1), each=4))
@@ -198,7 +198,7 @@ find_zeros_cross <- function(D, S){
 #' si <- seq(0, 1, length=M+1)[-(M+1)]
 #' gridcoords <- expand.grid(x=si, y=si)
 #' tprsX <- computeTPRS(coords = gridcoords, maxdf = tprs_df+1)
-#' compute_effective_range(X=tprsX$tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
+#' compute_effective_range(X=tprsX, coords=gridcoords, df=3:10, smoothedCurve=FALSE)
 #'
 #'
 #' xloc <- runif(n=100, min=0, max=10)

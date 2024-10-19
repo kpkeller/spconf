@@ -2,33 +2,37 @@
 % Please edit documentation in R/functions_tprs.R
 \name{computeTPRS}
 \alias{computeTPRS}
+\alias{arrangeTPRS}
 \title{Create TPRS basis}
 \usage{
 computeTPRS(coords, maxdf, rearrange = TRUE, intercept = FALSE)
+
+arrangeTPRS(tprs, intercept = FALSE)
 }
 \arguments{
 \item{coords}{Data frame containing the coordinates.}
 
 \item{maxdf}{Largest number of splines to include in TPRS basis}
 
-\item{rearrange}{Logical indicator of whether to rearrange the columns of TPRS basis. The default from \code{mgcv} puts the linear terms at the end; re-arranging moves them to the first columns of the matrix.}
+\item{rearrange}{Logical indicator of whether to rearrange the columns of TPRS basis.}
 
-\item{intercept}{Logical indicator of whether or not to remove the intercept column}
+\item{intercept}{Logical indicator of whether or not to remove the intercept column from the basis when \code{rearrange} is \code{TRUE}.}
+
+\item{tprs}{Matrix of TPRS basis values (from \code{computeTPRS}).}
 }
 \value{
-List with two element: An \eqn{n}-by-\eqn{N} matrix where \eqn{n} is the number of row in \code{coords} and \eqn{N} is equal to \code{maxdf}; an integer
+An \eqn{n}-by-\eqn{k} matrix where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
 }
 \description{
 Compute TPRS basis for given spatial coordinates
 }
 \details{
-This function creates a TPRS basis using the \code{mgcv} package from the given coordinates with the option to rearrange the columns such that last two columns are moved to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+\code{computeTPRS} creates a thin-plate regression spline (TPRS) basis from a two-dimensional set of coordinate locations using the \code{mgcv} package.
+
+ The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it function moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 }
 \examples{
 x <- runif(100)
 y <- runif(100)
 mat <- computeTPRS(data.frame(x, y), maxdf=4)
-}
-\seealso{
-\code{\link{arrangeTPRS}}
 }
