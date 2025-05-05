@@ -17,7 +17,8 @@ Description: Computes the effective range of a smoothing matrix,
     "Selecting a Scale for Spatial Confounding Adjustment" <doi:10.1111/rssa.12556>.
 Depends: R (>= 3.5)
 Imports: 
-    flexclust, 
+    flexclust,
+    fields,
     mgcv
 Suggests: 
     splines,
