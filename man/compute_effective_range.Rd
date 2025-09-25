@@ -10,6 +10,7 @@ compute_effective_range(
   coords = X[, c("x", "y")],
   df = 3,
   nsamp = min(1000, nrow(X)),
+  projected = TRUE,
   smoothedCurve = FALSE,
   newd = seq(0, 1, 100),
   scale_factor = 1,
@@ -41,6 +42,8 @@ compute_effective_range_nochecks(
 \item{df}{Degrees of freedom for which effective range should be computed.}
 
 \item{nsamp}{Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.}
+
+\item{projected}{Indicates whether the coordinates are projected (\code{TRUE}). If \code{TRUE}, Euclidean distances are computed. If \code{FALSE}, great circle distances (km) are computed.}
 
 \item{smoothedCurve}{Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.}
 

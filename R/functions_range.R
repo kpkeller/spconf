@@ -171,6 +171,7 @@ find_zeros_cross <- function(D, S){
 #' @param coords Matrix of point coordinates. Defaults to the \code{x} and \code{y} columns of \code{X}, but can have a different number of columns for settings with different dimensions.
 #' @param df Degrees of freedom for which effective range should be computed.
 #' @param nsamp Number of observations from \code{X} from which to sample. Defaults to minimum of 1,000 and \code{nrow(X)}.
+#' @param projected Indicates whether the coordinates are projected (\code{TRUE}). If \code{TRUE}, Euclidean distances are computed. If \code{FALSE}, great circle distances (km) are computed.
 #' @param newd Distance values at which to make loess predictions. Should correspond to distances in the same units as \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
 #' @param scale_factor Factor by which range should be scaled. Often physical distance corresponding to resolution of grid. Defaults to 1, so that range is reported on the same scale as distance in \code{coords}. Only needed when \code{smoothedCurve} is \code{TRUE}.
 #' @param smoothedCurve Should the effective range be computed using the procedure introduced by Keller and Szpiro, 2020, (\code{TRUE}) or the procedure introduced by Rainey and Keller, 2024, (\code{FALSE}). See Details.
@@ -192,6 +193,7 @@ find_zeros_cross <- function(D, S){
 #' @references Rainey and Keller (2024). spconfShiny: An R Shiny application for calculating the spatial scale of smoothing splines for point data. PLOS ONE https://doi.org/10.1371/journal.pone.0311440
 #' @export
 #' @importFrom flexclust dist2
+#' @importFrom fields rdist.earth
 #' @examples
 #' M <- 16
 #' tprs_df <- 10
@@ -208,12 +210,16 @@ find_zeros_cross <- function(D, S){
 #' compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, newd=xplot,
 #'                         namestem="s", smoothedCurve = TRUE)
 #'
-compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=FALSE, span=0.1){
+compute_effective_range <- function(X, coords=X[, c("x", "y")], df=3, nsamp=min(1000, nrow(X)), projected = TRUE, smoothedCurve = FALSE, newd=seq(0, 1, 100), scale_factor=1, returnFull=FALSE, cl=NULL,namestem="tprs", inds=NULL,verbose=FALSE, span=0.1){
     ngrid <- nrow(X)
     if (is.null(inds)){
         inds <- sample(ngrid, size=nsamp)
     }
-    D <- flexclust::dist2(coords, coords[inds,])
+    if(projected){
+        D <- flexclust::dist2(coords, coords[inds,])
+    } else {
+        D <- fields::rdist.earth(coords, coords[inds,])
+    }
     if(returnFull & smoothedCurve){
         out <- vector("list", length(df))
     } else {
