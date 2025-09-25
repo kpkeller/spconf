@@ -3,6 +3,13 @@
 
 # spconf
 
+<!-- Badges start-->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/spconf)](https://CRAN.R-project.org/package=spconf)
+[![](https://cranlogs.r-pkg.org/badges/spconf)](https://cran.r-project.org/package=spconf)
+<!-- Badges End -->
+
 R Package for Computing Scales of Spatial Smoothing for Confounding
 Adjustment
 
@@ -10,11 +17,15 @@ This package is designed to calculate the *effective bandwidth* of a
 spatial smoothing matrix, following two different procedures, described
 by Keller and Szpiro (2020) and Rainey and Keller (2024). This package
 also contains a wrapper function to create a thin-plate regression
-spline basis using the mgcv package (Wood, 2011).
+spline basis using the `mgcv` package (Wood, 2011).
 
 ## Installation
 
-The `spconf` package can be installed by running
+The `spconf` package can be installed from CRAN by running:
+
+    install.packages("spconf")
+
+The package can also be installed from GitHub by running:
 
     remotes::install_github("kpkeller/spconf")
 
@@ -42,9 +53,6 @@ compute_effective_range(X=tprsX, coords=gridcoords, namestem = "tprs",
                         df=3:10, smoothedCurve = FALSE)
 #>         3         4         5         6         7         8         9        10 
 #> 0.3801727 0.3365728 0.3125000 0.3125000 0.3125000 0.3125000 0.3125000 0.3186887
-```
-
-``` r
 
 # Example using metric of Keller and Szpiro (2020)
 xloc <- runif(n=100, min=0, max=10)
@@ -54,7 +62,7 @@ xplot <- 0:10
 compute_effective_range(X=X, coords=as.matrix(xloc), df=2:4, 
                         smoothedCurve = TRUE, newd=xplot, namestem="s")
 #>        2        3        4 
-#> 4.512474 4.472711 4.215862
+#> 4.568050 4.420565 4.256048
 ```
 
 ## References

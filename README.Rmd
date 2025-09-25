@@ -16,14 +16,25 @@ library(spconf)
 
 # spconf
 
+<!-- Badges start-->
+[![CRAN status](https://www.r-pkg.org/badges/version/spconf)](https://CRAN.R-project.org/package=spconf)
+[![](https://cranlogs.r-pkg.org/badges/spconf)](https://cran.r-project.org/package=spconf)
+<!-- Badges End -->
+
 R Package for Computing Scales of Spatial Smoothing for Confounding Adjustment
 
-This package is designed to calculate the *effective bandwidth* of a spatial smoothing matrix, following two different procedures, described by Keller and Szpiro (2020) and Rainey and Keller (2024). This package also contains a wrapper function to create a thin-plate regression spline basis using the mgcv package (Wood, 2011).
+This package is designed to calculate the *effective bandwidth* of a spatial smoothing matrix, following two different procedures, described by Keller and Szpiro (2020) and Rainey and Keller (2024). This package also contains a wrapper function to create a thin-plate regression spline basis using the `mgcv` package (Wood, 2011).
 
 
 ## Installation
 
-The `spconf` package can be installed by running
+The `spconf` package can be installed from CRAN by running:
+
+```
+install.packages("spconf")
+```
+
+The package can also be installed from GitHub by running:
 
 ```
 remotes::install_github("kpkeller/spconf")
