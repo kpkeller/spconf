@@ -18,7 +18,7 @@ compute_lowCurve(S, D, newd, cl = NULL, span = 0.1)
 \item{span}{Passed to \code{\link{fitLoess}}}
 }
 \value{
-List with three elements: \eqn{n}-by-\eqn{N} matrix, where \eqn{n} is the length of \code{newd} and \eqn{N} is the number of columns in \code{S}; a vector of length \eqn{n}; a vector of length \eqn{n}
+List with three elements: \eqn{n}-by-\eqn{N} matrix, where \eqn{n} is the length of \code{newd} and \eqn{N} is the number of columns in \code{S}; a vector of length \eqn{n} giving the median curve value; a vector of length \eqn{n} giving the mean curve value.
 }
 \description{
 Calculates a loess curve for the smoothing matrix entries, as a function of distance between points.

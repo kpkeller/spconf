@@ -57,7 +57,7 @@ Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...}
 
 \item{inds}{Indices of observations to use for computation. Passed to \code{\link{computeS}}.}
 
-\item{verbose}{Control message printing.}
+\item{verbose}{Control printing of a df counter to console.}
 
 \item{span}{Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates. Only needed when \code{smoothedCurve} is \code{TRUE}.}
 

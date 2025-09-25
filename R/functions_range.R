@@ -41,7 +41,7 @@ computeS <- function(x, inds=1:nrow(x)){
 #' @param newx Values of x to use for prediction.
 #' @param span Controls the amount of smoothing. Passed to \code{\link[stats]{loess}}; see that function for details.
 #' @param ... Additional arguments passed to \code{\link[stats]{loess}}
-#' @return A vector of the same length of \code{newx}
+#' @return A vector of the same length of \code{newx} providing the predictions from a loess smooth.
 #' @export
 #' @importFrom stats loess predict
 #' @examples
@@ -65,7 +65,7 @@ fitLoess <- function(y, x, newx=x, span=0.5,...){
 #' @param newd Distances to use for loess prediction.
 #' @param cl Cluster object, or number of cluster instances to create. Defaults to no parallelization.
 #' @param span Passed to \code{\link{fitLoess}}
-#' @return List with three elements: \eqn{n}-by-\eqn{N} matrix, where \eqn{n} is the length of \code{newd} and \eqn{N} is the number of columns in \code{S}; a vector of length \eqn{n}; a vector of length \eqn{n}
+#' @return List with three elements: \eqn{n}-by-\eqn{N} matrix, where \eqn{n} is the length of \code{newd} and \eqn{N} is the number of columns in \code{S}; a vector of length \eqn{n} giving the median curve value; a vector of length \eqn{n} giving the mean curve value.
 #' @details For each column in \code{S}, a loess curve is fit to the values as a function of the distances between points, which are taken from the columns of \code{D}. Thus, the order of rows and columns in \code{S} should match the order of rows and columns in \code{D}.
 #' For a large number of locations, this procedure may be somewhat slow. The \code{cl} argument can be used to parallelize the operation using \code{\link[parallel]{clusterMap}}.
 #' @seealso \code{\link{computeS}} \code{\link{fitLoess}}
@@ -179,7 +179,7 @@ find_zeros_cross <- function(D, S){
 #' @param namestem Stem of names of columns of X corresponding to evaluated splines.
 #' Defaults to \code{""}, meaning names of the form \code{1}, \code{2}, ...
 #' @param inds Optional vector of indices to use as subset. If provided, \code{nsamp} is not used.
-#' @param verbose Control message printing.
+#' @param verbose Control printing of a df counter to console.
 #' @param span Passed to \code{\link{fitLoess}}. If too small, then can lead to unstable loess estimates. Only needed when \code{smoothedCurve} is \code{TRUE}.
 #' @return The effective bandwidth for each value of \code{df}. If \code{returnFull = FALSE}, then this is a vector of the same length as \code{df}. If \code{returnFull = TRUE} and \code{smoothedCurve = TRUE}, this is a list that additionally contains values of the pointwise median and mean of the smoothed curves.
 #' @details Using the given spline basis and the inputted coordinates, the effective bandwidth is computed for the given degrees of freedom. This is accomplished by computing a distance matrix from the coordinates and a smoothing matrix from the basis.

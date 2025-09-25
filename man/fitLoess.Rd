@@ -18,7 +18,7 @@ fitLoess(y, x, newx = x, span = 0.5, ...)
 \item{...}{Additional arguments passed to \code{\link[stats]{loess}}}
 }
 \value{
-A vector of the same length of \code{newx}
+A vector of the same length of \code{newx} providing the predictions from a loess smooth.
 }
 \description{
 Wrapper function for fitting and predicting from \code{loess()}.

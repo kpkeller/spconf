@@ -10,10 +10,10 @@
 #' @param maxdf Largest number of splines to include in TPRS basis
 #' @param rearrange Logical indicator of whether to rearrange the columns of TPRS basis.
 #' @param intercept Logical indicator of whether or not to remove the intercept column from the basis when \code{rearrange} is \code{TRUE}.
-#' @return An \eqn{n}-by-\eqn{k} matrix where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
+#' @return An \eqn{n}-by-\eqn{k} matrix of spline basis functions where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
 #' @details \code{computeTPRS} creates a thin-plate regression spline (TPRS) basis from a two-dimensional set of coordinate locations using the \code{mgcv} package.
 #'
-#'  The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it function moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+#'  The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. Use \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 #'
 #' @importFrom mgcv smoothCon s PredictMat
 #' @export

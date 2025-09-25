@@ -21,7 +21,7 @@ arrangeTPRS(tprs, intercept = FALSE)
 \item{tprs}{Matrix of TPRS basis values (from \code{computeTPRS}).}
 }
 \value{
-An \eqn{n}-by-\eqn{k} matrix where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
+An \eqn{n}-by-\eqn{k} matrix of spline basis functions where \eqn{n} is the number of rows in \code{coords} and \eqn{k} is equal to \code{maxdf}
 }
 \description{
 Compute TPRS basis for given spatial coordinates
@@ -29,7 +29,7 @@ Compute TPRS basis for given spatial coordinates
 \details{
 \code{computeTPRS} creates a thin-plate regression spline (TPRS) basis from a two-dimensional set of coordinate locations using the \code{mgcv} package.
 
- The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it function moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
+ The output from \code{mgcv} is structured to have the linear terms as the last columns of the matrix. Use \code{arrangeTPRS()} to arrange the matrix columns to be in order of increasing resolution. Specifically, it moves the last two columns to the left of the matrix and the third-from last column, which corresponds to the intercept, is optionally removed.
 }
 \examples{
 x <- runif(100)
